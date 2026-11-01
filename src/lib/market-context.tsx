@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { CANDIDATES, type Candidate } from "@/config/candidates";
+import { CONTROL, raceUrl, type Chamber } from "@/config/race";
 import { SITE } from "@/config/site";
 import { PARTY_COINS, partyKey } from "@/config/parties";
 import { CONFIG_MINTS, resolveMints, type Mints } from "./coins";
@@ -53,12 +54,14 @@ const Ctx = createContext<MarketState>(EMPTY);
 const entriesFor = (m: Mints) => [
   { key: MAIN_KEY, mint: m.main },
   ...CANDIDATES.map((c) => ({ key: c.id, mint: m.byId[c.id] ?? "" })),
-  ...PARTY_COINS.map((p) => ({ key: partyKey(p.id), mint: p.mint })),
+  ...PARTY_COINS.map((p) => ({ key: partyKey(p.id), mint: m.byId[partyKey(p.id)] ?? "" })),
 ];
 const ODDS_IDS = [
   ...CANDIDATES.flatMap((c) => (c.polymarketId ? [c.polymarketId] : [])),
-  SITE.partyMarkets.R,
-  SITE.partyMarkets.D,
+  SITE.control.house.R,
+  SITE.control.house.D,
+  SITE.control.senate.R,
+  SITE.control.senate.D,
 ];
 
 export function MarketProvider({ children }: { children: React.ReactNode }) {
@@ -133,12 +136,12 @@ export const useMarket = () => useContext(Ctx);
 
 export type CandidateRow = Candidate & {
   market: TokenMarket | null;
-  // Win probability 0–1 and its day/week change in probability points (0–1 scale).
+  // Odds of winning their own race, 0–1, and the day/week change in probability points (0–1 scale).
   odds: number | null;
   oddsDay: number | null;
   oddsWeek: number | null;
   holders: Holders | null;
-  // This candidate's market on polymarket.com (or the event page until the slug loads).
+  // This candidate's market on polymarket.com (or the race's event page until the slug loads).
   pmUrl: string;
 };
 
@@ -148,24 +151,31 @@ export function useCandidateRows(): CandidateRow[] {
     () =>
       CANDIDATES.map((c) => {
         const o = c.polymarketId ? odds[c.polymarketId] : undefined;
+        const event = raceUrl(c.race);
         return {
           ...c,
           mint: mints.byId[c.id] ?? "",
           ticker: mints.symbols[c.id] ?? c.ticker,
           market: markets[c.id] ?? null,
-          odds: o?.p ?? null,
+          odds: c.status === "won" ? 1 : c.status === "lost" ? 0 : (o?.p ?? null),
           oddsDay: o?.day ?? null,
           oddsWeek: o?.week ?? null,
           holders: holders[c.id] ?? null,
-          pmUrl: o?.slug ? `${SITE.polymarketEvent}/${o.slug}` : SITE.polymarketEvent,
+          pmUrl: o?.slug ? `${event}/${o.slug}` : event,
         };
       }),
     [markets, odds, holders, mints],
   );
 }
 
-// Polymarket's party-level odds (0–1) for the White House, null until loaded.
+// Each party's odds (0–1) of controlling the House and the Senate, null until loaded. Once control
+// is called (CONTROL in config/race.ts) that result stands in for the market.
 export function usePartyOdds() {
   const { odds } = useMarket();
-  return { R: odds[SITE.partyMarkets.R]?.p ?? null, D: odds[SITE.partyMarkets.D]?.p ?? null };
+  const of = (chamber: Chamber) => {
+    const called = CONTROL[chamber];
+    const p = (party: "R" | "D") => (called ? (called === party ? 1 : 0) : (odds[SITE.control[chamber][party]]?.p ?? null));
+    return { R: p("R"), D: p("D"), called };
+  };
+  return { house: of("house"), senate: of("senate") };
 }

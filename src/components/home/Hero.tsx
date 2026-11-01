@@ -35,7 +35,7 @@ export default function Hero() {
       </div>
       <Wrap className="relative py-10 sm:py-14">
         <h1 className="poster-shadow mb-8 font-slab text-[clamp(38px,7vw,84px)] uppercase leading-[0.88]">
-          The race, <span className="text-gold">on-chain.</span>
+          The midterms, <span className="text-gold">on-chain.</span>
         </h1>
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-start">
         <div className="min-w-0">
@@ -58,7 +58,7 @@ export default function Hero() {
             tone="cream"
             label="Days to Election Day"
             value={days === null ? "—" : days}
-            sub="Tuesday · Nov 7, 2028"
+            sub="Tuesday · Nov 3, 2026"
             className="sm:col-span-2 lg:col-span-1"
           />
         </div>

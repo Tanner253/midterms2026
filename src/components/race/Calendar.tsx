@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { CANDIDATES, PARTIES } from "@/config/candidates";
 import { EVENTS, stageLabel, type RaceEvent } from "@/config/race";
 import { useNow } from "@/lib/useNow";
 import { PartyTag } from "../Avatar";
@@ -9,18 +8,7 @@ import { Segmented } from "../ui";
 
 type Filter = "upcoming" | "past" | "all";
 
-// Drop-outs with a date show up in the calendar as decided events.
-const DROPOUTS: RaceEvent[] = CANDIDATES.filter((c) => c.status === "out" && c.outDate).map((c) => ({
-  id: `out-${c.id}`,
-  title: `${c.name} drops out`,
-  stage: c.outAt ?? "field",
-  date: c.outDate!,
-  place: PARTIES[c.party].name,
-  party: c.party,
-  result: "Out",
-}));
-
-const ALL = [...EVENTS, ...DROPOUTS];
+const ALL = EVENTS;
 const dayEnd = (d: string) => Date.parse(`${d}T23:59:59-05:00`);
 const isPast = (e: RaceEvent, now: number) => !!e.result || (e.date !== null && dayEnd(e.date) < now);
 const sortKey = (e: RaceEvent) => (e.date ? Date.parse(e.date) : Infinity);

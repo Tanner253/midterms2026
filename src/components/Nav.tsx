@@ -9,7 +9,7 @@ import Seal from "./Seal";
 
 export const LINKS = [
   { href: "/", label: "Home", short: "Home", Icon: IconHome },
-  { href: "/president/", label: `$${SITE.ticker}`, short: `$${SITE.ticker}`, Icon: IconCoin },
+  { href: "/midterms/", label: `$${SITE.ticker}`, short: `$${SITE.ticker}`, Icon: IconCoin },
   { href: "/candidates/", label: "Candidates", short: "Candidates", Icon: IconUsers },
   { href: "/race/", label: "The Race", short: "Race", Icon: IconFlag },
   { href: "/voters/", label: "Voter Card", short: "Voters", Icon: IconBallot },
@@ -30,9 +30,9 @@ export default function Nav() {
           >
             <Seal size={46} />
             <span className="font-slab text-lg leading-[0.95] sm:text-xl">
-              PRESIDENT
+              MIDTERMS
               <br />
-              <span className="text-red">2028</span>
+              <span className="text-red">2026</span>
             </span>
           </Link>
           <nav aria-label="Main" className="ml-auto hidden items-center gap-1 lg:flex">

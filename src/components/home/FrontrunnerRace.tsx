@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { PARTIES } from "@/config/candidates";
+import { raceById } from "@/config/race";
 import { SITE } from "@/config/site";
 import { changeColor, fmtDir, fmtOdds, fmtUsdShort } from "@/lib/format";
 import { useCandidateRows, useMarket, type CandidateRow } from "@/lib/market-context";
@@ -18,13 +19,14 @@ const COLS = {
 } as const;
 type Col = keyof typeof COLS;
 
-// WC's Golden Boot table, election-style: the top 8 in the race, sortable.
+// WC's Golden Boot table, election-style: the top 8 coins by market cap, sortable.
 export default function FrontrunnerRace() {
   const rows = useCandidateRows();
   const { oddsLoaded } = useMarket();
-  const [sort, setSort] = useState<{ col: Col; desc: boolean }>({ col: "odds", desc: true });
+  const [sort, setSort] = useState<{ col: Col; desc: boolean }>({ col: "mcap", desc: true });
 
-  const top8 = [...rows].sort((a, b) => (b.odds ?? -1) - (a.odds ?? -1)).slice(0, 8);
+  // Market cap, not odds: a safe seat's 98% isn't ahead of a toss-up's 60% in another race.
+  const top8 = [...rows].sort((a, b) => (b.market?.marketCap ?? -1) - (a.market?.marketCap ?? -1)).slice(0, 8);
   const sorted = [...top8].sort((a, b) => {
     const c = COLS[sort.col];
     const x = c.key(a);
@@ -54,7 +56,7 @@ export default function FrontrunnerRace() {
     <section className="py-14 sm:py-20">
       <Wrap>
         <SectionTitle
-          kicker="Live from Polymarket"
+          kicker="Ranked by market cap"
           title="Frontrunner race"
           aside={
             <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="font-narrow font-bold uppercase tracking-[0.16em] text-gold hover:text-cream">
@@ -90,7 +92,7 @@ export default function FrontrunnerRace() {
                     <span className="min-w-0">
                       <span className="block truncate font-bold uppercase">{r.name}</span>
                       <span className="block font-narrow text-xs font-bold uppercase tracking-[0.14em]" style={{ color: r.party === "I" ? "var(--color-gold)" : r.party === "R" ? "var(--color-red-hot)" : "var(--color-sky)" }}>
-                        {PARTIES[r.party].short} · ${r.ticker}
+                        {PARTIES[r.party].short} · ${r.ticker} · {raceById(r.race).short}
                       </span>
                     </span>
                   </span>
@@ -102,7 +104,8 @@ export default function FrontrunnerRace() {
                 </Link>
               ))}
         </div>
-        <div className="mt-5 text-center">
+        <p className="mt-4 text-center font-narrow text-sm font-bold uppercase tracking-[0.16em] text-cream/55">Odds are for that candidate&apos;s own race</p>
+        <div className="mt-3 text-center">
           <Link href="/candidates/" className="font-narrow font-bold uppercase tracking-[0.16em] text-gold hover:text-cream">
             All {rows.length} candidates →
           </Link>

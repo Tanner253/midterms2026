@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CANDIDATES, PARTIES, isAlive, statusLabel, statusTone } from "@/config/candidates";
+import { CANDIDATES, isAlive, statusLabel, statusTone } from "@/config/candidates";
+import { RACES, raceById } from "@/config/race";
 import { SITE, pumpUrl } from "@/config/site";
 import { changeColor, fmtDir, fmtOdds, fmtOddsDelta, fmtPct, fmtUsdShort, fmtCompact } from "@/lib/format";
 import { useCandidateRows, useMarket, type CandidateRow } from "@/lib/market-context";
@@ -11,23 +12,18 @@ import PartiesSection from "./PartiesSection";
 import TokenCard from "./TokenCard";
 import { Segmented, StatBlock, Wrap } from "./ui";
 
-const VIEW_KEY = "p28_candidates_view";
+const VIEW_KEY = "mt26_candidates_view";
 const ROW_H = 60;
 
 type Ranked = CandidateRow & { rank: number; move: number };
 
-// WC's board ranks by market cap; before launch we rank by Polymarket odds.
-// Movement compares against the 24h-ago ranking (mcap / (1 + change), or odds − day change).
+// WC's board ranks by market cap. Odds can't rank here: each is for a different race, so a safe
+// seat's 98% isn't ahead of a toss-up's 60%. Before launch the board stays in roster order.
+// Movement compares against the 24h-ago ranking (mcap / (1 + change)).
 function rank(rows: CandidateRow[], byMcap: boolean): Ranked[] {
-  const now = (r: CandidateRow) => (byMcap ? (r.market?.marketCap ?? -1) : (r.odds ?? -1));
-  const then = (r: CandidateRow) =>
-    byMcap
-      ? r.market
-        ? r.market.marketCap / (1 + r.market.change24h / 100)
-        : -1
-      : r.odds !== null
-        ? r.odds - (r.oddsDay ?? 0)
-        : -1;
+  const roster = (r: CandidateRow) => -rows.indexOf(r);
+  const now = (r: CandidateRow) => (byMcap ? (r.market?.marketCap ?? -1) : roster(r));
+  const then = (r: CandidateRow) => (byMcap ? (r.market ? r.market.marketCap / (1 + r.market.change24h / 100) : -1) : roster(r));
   const order = (key: (r: CandidateRow) => number) =>
     [...rows].sort((a, b) => Number(isAlive(b)) - Number(isAlive(a)) || key(b) - key(a)).map((r) => r.id);
   const cur = order(now);
@@ -67,10 +63,10 @@ export default function CandidatesView() {
     <>
       <PageHero
         variant="red"
-        kicker={`${CANDIDATES.length} coins · one White House`}
+        kicker={`${CANDIDATES.length} coins · ${RACES.length} races`}
         title="The Candidates"
         titleClass="text-[clamp(40px,6.4vw,96px)]"
-        subtitle={`${CANDIDATES.length} names on the board, ${alive} still in the race. Every coin feeds $${SITE.ticker}.`}
+        subtitle={`${CANDIDATES.length} names on the board, ${alive} still in the running. Every coin feeds $${SITE.ticker}.`}
         aside={
           <div className="grid auto-rows-fr grid-cols-2 gap-3 md:w-[440px]">
             <StatBlock tone="gold" label="Still in" value={`${alive}/${CANDIDATES.length}`} valueClass="text-[clamp(24px,3vw,36px)]" />
@@ -93,7 +89,7 @@ export default function CandidatesView() {
             ]}
           />
           <span className="font-narrow text-xs font-bold uppercase tracking-[0.2em] text-cream/60">
-            Ranked by {byMcap ? "market cap" : "Polymarket win odds"}
+            {byMcap ? "Ranked by market cap" : "Ranked by market cap once coins launch"}
           </span>
         </div>
 
@@ -108,7 +104,7 @@ export default function CandidatesView() {
         )}
 
         <p className="mt-5 font-narrow text-sm font-bold uppercase tracking-[0.16em] text-cream/55">
-          Odds: live from{" "}
+          Odds are for that candidate&apos;s own race, live from{" "}
           <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="text-gold underline-offset-2 hover:underline">
             Polymarket ↗
           </a>
@@ -157,7 +153,7 @@ function Board({ rows, byMcap, ready }: { rows: Ranked[]; byMcap: boolean; ready
       <div className="relative" style={{ height: rows.length * ROW_H }}>
         {rows.map((r) => {
           const tone = statusTone(r);
-          const sub = r.status === "undeclared" ? PARTIES[r.party].name : statusLabel(r);
+          const sub = r.status === "running" ? raceById(r.race).short : statusLabel(r);
           const cells = (
             <>
               <span className={`font-slab text-lg md:text-[22px] ${r.rank < 3 ? "text-gold" : "text-cream/90"}`}>{r.rank + 1}</span>
@@ -201,7 +197,7 @@ function Board({ rows, byMcap, ready }: { rows: Ranked[]; byMcap: boolean; ready
               {cells}
             </a>
           ) : (
-            <a key={r.id} id={r.id} href={r.pmUrl} target="_blank" rel="noopener noreferrer" aria-label={`${r.name}: win odds on Polymarket`} className={cls} style={style}>
+            <a key={r.id} id={r.id} href={r.pmUrl} target="_blank" rel="noopener noreferrer" aria-label={`${r.name}: race odds on Polymarket`} className={cls} style={style}>
               {cells}
             </a>
           );

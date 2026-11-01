@@ -1,10 +1,12 @@
 "use client";
 
 import { CANDIDATES, isAlive } from "@/config/candidates";
-import { nextDatedEvent } from "@/config/race";
+import { RACES, nextDatedEvent } from "@/config/race";
 import { SITE } from "@/config/site";
 import { fmtOdds } from "@/lib/format";
+import { CYCLE_MS } from "@/lib/market";
 import { useCandidateRows, useMarket, usePartyOdds, type CandidateRow } from "@/lib/market-context";
+import { calledRaces } from "@/lib/race";
 import { splitDuration, useNow } from "@/lib/useNow";
 import { nextCycleTarget } from "../Countdown";
 import { LiveDot } from "../ui";
@@ -17,22 +19,23 @@ export default function Chyron() {
   const now = useNow();
 
   const headlines: React.ReactNode[] = [];
-  if (party.R !== null && party.D !== null)
-    headlines.push(
-      <>
-        Party odds · <span className="text-red-hot">GOP {fmtOdds(party.R)}</span> · <span className="text-sky">DEM {fmtOdds(party.D)}</span>
-      </>,
-    );
-  headlines.push(<>{CANDIDATES.filter(isAlive).length} candidates remain · drop out and go home</>);
+  for (const [label, odds] of [["House", party.house], ["Senate", party.senate]] as const)
+    if (odds.R !== null && odds.D !== null)
+      headlines.push(
+        <>
+          {label} control · <span className="text-red-hot">GOP {fmtOdds(odds.R)}</span> · <span className="text-sky">DEM {fmtOdds(odds.D)}</span>
+        </>,
+      );
+  headlines.push(<>{CANDIDATES.filter(isAlive).length} candidates in {RACES.length} races · {calledRaces().length} called</>);
   if (now !== null) {
     const e = nextDatedEvent(now);
     if (e?.date) headlines.push(<>{splitDuration(Date.parse(`${e.date}T00:00:00-05:00`) - now).days} days to {e.title}</>);
-    const burn = nextCycleTarget(stats?.nextCycleAt, stats?.cycleIntervalMs ?? 3_600_000, now);
+    const burn = nextCycleTarget(stats?.nextCycleAt, stats?.cycleIntervalMs ?? CYCLE_MS, now);
     headlines.push(burn === null ? <>${SITE.ticker} burns start at launch</> : <>Next ${SITE.ticker} burn in {Math.ceil((burn - now) / 60000)} min</>);
   }
 
   // A headline after every few candidates.
-  const sorted = [...rows].sort((a, b) => (b.odds ?? -1) - (a.odds ?? -1));
+  const sorted = [...rows].sort((a, b) => (b.market?.marketCap ?? -1) - (a.market?.marketCap ?? -1));
   const items: React.ReactNode[] = [];
   sorted.forEach((r, i) => {
     if (i % 5 === 0 && headlines.length) items.push(<Headline key={`h${i}`}>{headlines[(i / 5) % headlines.length]}</Headline>);
@@ -60,7 +63,7 @@ export default function Chyron() {
       <div className="relative z-10 hidden shrink-0 items-center gap-1 border-l-4 border-ink bg-ink px-4 tabular-nums text-cream sm:flex">
         {clock} <span className="text-gold">ET</span>
       </div>
-      <span className="sr-only">Live headlines from the 2028 race and Polymarket odds.</span>
+      <span className="sr-only">Live headlines from the 2026 midterms and Polymarket odds.</span>
     </div>
   );
 }

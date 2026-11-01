@@ -75,7 +75,7 @@ export function timeAgo(iso: string | null | undefined, now: number) {
   return `${Math.floor(s / 86400)} d ago`;
 }
 
-// "Nov 7", "Mar 7, 2028"
+// "Nov 3", "Nov 3, 2026"
 export function fmtDate(iso: string, withYear = false) {
   return new Date(iso).toLocaleDateString("en-US", {
     month: "short",

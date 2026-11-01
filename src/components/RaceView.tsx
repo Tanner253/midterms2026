@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CANDIDATES, isAlive } from "@/config/candidates";
-import { CURRENT_STAGE, STAGES, stageIndex } from "@/config/race";
+import { CURRENT_STAGE, RACES, STAGES, stageIndex } from "@/config/race";
+import { calledRaces } from "@/lib/race";
 import PageHero from "./PageHero";
 import Ballot from "./race/Ballot";
 import Calendar from "./race/Calendar";
@@ -14,7 +14,7 @@ const VIEWS: View[] = ["road", "calendar", "ballot"];
 
 export default function RaceView() {
   const [view, setView] = useState<View>("road");
-  const alive = CANDIDATES.filter(isAlive).length;
+  const called = calledRaces().length;
   const current = stageIndex(CURRENT_STAGE);
 
   useEffect(() => {
@@ -32,13 +32,13 @@ export default function RaceView() {
 
   const chips = [
     ["Stage", STAGES[current].label],
-    ["In the race", `${alive}/${CANDIDATES.length}`],
-    ["Election Day", "Nov 7, 2028"],
+    ["Called", `${called}/${RACES.length}`],
+    ["Election Day", "Nov 3, 2026"],
   ];
 
   return (
     <>
-      <PageHero variant="red" kicker="Road to the White House" title="The Race" subtitle={`${alive} left, one White House. Drop out and go home.`}>
+      <PageHero variant="red" kicker="Road to the 120th Congress" title="The Race" subtitle={`${RACES.length} races on the board, ${called} called. One seat each.`}>
         <div className="mt-6 flex flex-wrap gap-2">
           {chips.map(([k, v]) => (
             <span key={k} className="border-[3px] border-ink bg-ink px-3 py-1.5 font-narrow text-sm font-bold uppercase tracking-[0.14em]">

@@ -3,7 +3,7 @@ import { ANNOUNCEMENT } from "@/config/site";
 import BuyButton from "../BuyButton";
 import { Wrap } from "../ui";
 
-// Full-width "Buy $PRESIDENT on pump.fun" band under the hero.
+// Full-width "Buy $MIDTERMS on pump.fun" band under the hero.
 export function BuyBand() {
   return (
     <section className="border-b-4 border-ink bg-ink py-10">

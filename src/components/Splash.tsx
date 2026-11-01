@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ENTERED_KEY } from "@/lib/splash";
 import Seal from "./Seal";
 
-const GATED = new Set(["/", "/president", "/candidates", "/race", "/voters"]);
+const GATED = new Set(["/", "/midterms", "/candidates", "/race", "/voters"]);
 
 export default function Splash() {
   const path = (usePathname() ?? "/").replace(/\/+$/, "") || "/";
@@ -45,7 +45,7 @@ export default function Splash() {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Welcome to US President 2028"
+      aria-label="Welcome to US Midterms 2026"
       className={`fixed inset-0 z-50 flex items-center justify-center overflow-clip bg-navy transition-opacity duration-200 [html[data-entered]_&]:hidden ${
         leaving ? "opacity-0" : "opacity-100"
       }`}
@@ -60,9 +60,9 @@ export default function Splash() {
       <div className="relative flex animate-rise flex-col items-center px-4 text-center">
         <Seal size={132} className="drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]" />
         <div className="poster-shadow mt-6 font-slab text-[clamp(44px,11vw,104px)] leading-[0.95] text-cream">
-          US PRESIDENT
+          US MIDTERMS
           <br />
-          <span className="text-gold">2028</span>
+          <span className="text-gold">2026</span>
         </div>
         <p className="mt-4 font-narrow text-sm font-bold uppercase tracking-[0.4em] text-cream/90">Exclusively on pump.fun</p>
         <button

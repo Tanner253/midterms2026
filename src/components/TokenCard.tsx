@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { PARTIES, isAlive, statusLabel } from "@/config/candidates";
 import { PHOTOS } from "@/config/photos";
+import { raceById } from "@/config/race";
 import { pumpUrl } from "@/config/site";
 import { changeColor, fmtCompact, fmtDir, fmtOdds, fmtOddsDelta, fmtUsd, fmtUsdShort } from "@/lib/format";
 import type { CandidateRow } from "@/lib/market-context";
 
 // WC-style coin card: party colour with the candidate's portrait full-bleed on the right.
 // Live coins show price + 24h and link to pump.fun. Before launch the headline number is the
-// Polymarket win odds and the card links to that market (or to the board, with fallback="board").
+// Polymarket odds for their race and the card links to that market (or to the board, with fallback="board").
 export default function TokenCard({
   r,
   banner,
@@ -25,7 +26,7 @@ export default function TokenCard({
   const photo = r.image ?? PHOTOS[r.id]?.src;
   const m = r.market;
   const out = !isAlive(r);
-  const sub = r.status === "undeclared" ? p.name : statusLabel(r);
+  const sub = r.status === "running" ? raceById(r.race).short : statusLabel(r);
 
   const body = (
     <>
@@ -61,7 +62,7 @@ export default function TokenCard({
               <div className="flex items-baseline gap-2">
                 <span className="font-slab text-[32px] leading-none tabular-nums [text-shadow:0_2px_0_rgba(0,0,0,0.6)]">{fmtOdds(r.odds)}</span>
                 <span className="font-narrow text-xs font-bold uppercase tracking-[0.2em]">
-                  win odds{r.oddsWeek !== null && <span className={`ml-2 ${changeColor(r.oddsWeek)}`}>{fmtOddsDelta(r.oddsWeek)} 7d</span>}
+                  race odds{r.oddsWeek !== null && <span className={`ml-2 ${changeColor(r.oddsWeek)}`}>{fmtOddsDelta(r.oddsWeek)} 7d</span>}
                 </span>
               </div>
             )}
@@ -96,7 +97,7 @@ export default function TokenCard({
     </a>
   );
   if (r.mint) return external(pumpUrl(r.mint), `${r.name}: buy $${r.ticker} on pump.fun`, "Buy on pump.fun");
-  if (fallback === "polymarket") return external(r.pmUrl, `${r.name}: win odds on Polymarket`, "Odds on Polymarket");
+  if (fallback === "polymarket") return external(r.pmUrl, `${r.name}: race odds on Polymarket`, "Odds on Polymarket");
   return (
     <Link id={id} href={`/candidates/#${r.id}`} aria-label={`${r.name} on the candidates board`} className={cls}>
       {body}

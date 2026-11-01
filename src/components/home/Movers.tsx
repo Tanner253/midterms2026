@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { raceById } from "@/config/race";
 import { useCandidateRows, type CandidateRow } from "@/lib/market-context";
 import SectionTitle from "../SectionTitle";
 import TokenCard from "../TokenCard";
@@ -9,7 +10,7 @@ import { Wrap } from "../ui";
 type Pick = { r: CandidateRow; label: string; tone: string };
 
 // Top gainer & top loser over 24h. Before any coin is live, the biggest Polymarket odds
-// movers over 7 days stand in, and failing that the two frontrunners.
+// movers over 7 days stand in, and failing that the biggest race.
 function pickMovers(rows: CandidateRow[]): { kicker: string; title: string; picks: Pick[] } {
   const live = rows.filter((r) => r.market);
   if (live.length >= 2) {
@@ -36,13 +37,13 @@ function pickMovers(rows: CandidateRow[]): { kicker: string; title: string; pick
         ],
       };
   }
-  const top = [...rows].sort((a, b) => (b.odds ?? -1) - (a.odds ?? -1));
+  // Roster order: the two candidates in the biggest race.
   return {
     kicker: "Polymarket",
-    title: "The frontrunners",
+    title: "The biggest race",
     picks: [
-      { r: top[0], label: "★ Frontrunner", tone: "bg-gold text-ink" },
-      { r: top[1], label: "Runner-up", tone: "bg-cream text-ink" },
+      { r: rows[0], label: `★ ${raceById(rows[0].race).short}`, tone: "bg-gold text-ink" },
+      { r: rows[1], label: `★ ${raceById(rows[1].race).short} rival`, tone: "bg-cream text-ink" },
     ],
   };
 }

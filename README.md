@@ -1,55 +1,58 @@
-# US President 2028 ($PRESIDENT)
+# US Midterms 2026 ($MIDTERMS)
 
-The World Cup on Pump format, remade for the 2028 presidential race: one pump.fun coin per candidate, all feeding the main $PRESIDENT coin.
+The World Cup on Pump format, remade for the 2026 US midterms: one pump.fun coin per candidate in the 12 biggest statewide races, plus three party coins, all feeding the main $MIDTERMS coin.
 
 Live: https://midterms2026.fun
 
-## Pages (and their World Cup equivalents)
+## Pages
 
-| Ours | World Cup on Pump | What's on it |
-| --- | --- | --- |
-| `/` | Home | Splash gate, scoreboard (next big day, next burn, candidates remaining, up next), burned / market cap / Election Day blocks, buy band, ticker, 4-step fee engine, "paired to $PRESIDENT", top gainer & loser, frontrunner table (their Golden Boot) |
-| `/president/` | `/worldcup/` | Burn cam, contract address, market cap / volume / price / liquidity / holders / % burnt, chart, fee-engine totals |
-| `/candidates/` | `/countries/` | Ranked board (position, movement, odds, market cap, 24h, volume, holders) and photo cards |
-| `/race/` | `/tournament/` | Road to the White House bracket, race calendar (their fixtures), "Call the race" ballot (their bracket challenge) with share links |
-| `/voters/` | `/passport/` | Voter Card: holder leaderboard with 5 tiers, 8 badges, wallet lookup |
-| `/credits/` | n/a | Photo credits (Wikimedia Commons licenses) |
+| Page | What's on it |
+| --- | --- |
+| `/` | Splash gate, scoreboard (next big day, next burn, candidates remaining, up next), burned / market cap / Election Day blocks, buy band, ticker, Race to 218 and Race to 51 bars, 4-step fee engine, how candidates feed $MIDTERMS, top gainer & loser, frontrunner table ranked by market cap |
+| `/midterms/` | Burn cam, contract address, market cap / volume / price / liquidity / holders / % burnt, chart, fee-engine totals |
+| `/candidates/` | Ranked board (position, movement, race odds, market cap, 24h, volume, holders), photo cards, the Parties section |
+| `/race/` | Head-to-head race cards grouped by Senate and Governor, race calendar, "Call the race" ballot with share links |
+| `/voters/` | Voter Card: holder leaderboard with 5 tiers, 8 badges, wallet lookup |
+| `/credits/` | Photo credits |
 
 ## Data sources
 
 | What | Where it comes from |
 | --- | --- |
-| Coin price, market cap, volume, 24h change | DexScreener public API, in the browser, every 60s |
-| Win odds | Polymarket "Presidential Election Winner 2028" market (gamma `/markets/keyset`), every 5 min |
-| Party odds ("Race to 270", chyron) | Polymarket "Which party wins 2028" market, ids in `SITE.partyMarkets` |
-| Burned, SOL routed, cycle times, holder counts, burn log | MongoDB, written hourly by the crank (private repo `midterms2026-crank`), served by this site's read-only `/api/stats` route |
+| Coin price, market cap, volume, 24h change | DexScreener public API, in the browser, every 60s. Jupiter fills in coins DexScreener misses. |
+| Race odds | Each race's Polymarket event (gamma `/markets/keyset`), every 5 min. Open and closed markets are both read, because keyset leaves closed ones out by default. |
+| Race to 218, Race to 51, chyron | Polymarket's House and Senate control markets, ids in `SITE.control` |
+| Burned total | Read from the chain by `/api/stats` |
+| SOL claimed, dev cut, cycle times, holder counts, burn log | MongoDB, written every 15 minutes by the crank (private repo `midterms2026-crank`), served by this site's read-only `/api/stats` route |
 | Voter Card | `board-meta.json` + `board-{n}.json`, written by your internal claim process |
+
+Odds are never used to rank coins. Each one is for a different race, so a 98% favourite in a safe seat isn't ahead of a 60% favourite elsewhere. Boards rank by market cap.
 
 ## Launch checklist
 
-1. **Main coin:** paste the $PRESIDENT contract address into `mainMint` in `src/config/site.ts`.
-2. **Candidate coins:** paste each contract address into that candidate's `mint` in `src/config/candidates.ts`. Until a coin has one, its card says "Soon".
+The launch guide is `LAUNCH.md` in the crank repo. The site's part:
+
+1. **Main coin:** paste the $MIDTERMS contract address into `mainMint` in `src/config/site.ts` and redeploy.
+2. **Candidate and party coins:** nothing to do. The crank finds every coin the creator wallet launched and the site matches them by name, then ticker. Until a coin is found, its card says "Soon". An address typed into `candidates.ts` or `parties.ts` wins over the match.
 3. **Socials:** fill in `socials` in `src/config/site.ts`; empty links stay hidden.
-4. **Giveaway (optional):** set `BALLOT.prize` in `src/config/site.ts` to show winners × SOL and rules on the ballot. Edit or remove the home `ANNOUNCEMENT` band there too.
-5. **Database:** add `MONGODB_URI` (the full MongoDB connection string; a read-only user is safest) to the Vercel project's Production environment variables.
-6. **Demo off:** `vercel env rm NEXT_PUBLIC_DEMO production`.
-7. **Deploy:** `vercel --prod`.
+4. **Giveaway (optional):** set `BALLOT.prize` in `src/config/site.ts`, and edit or remove the home `ANNOUNCEMENT` band there too.
+5. **Database:** add `MONGODB_URI` (a read-only user) to the Vercel project's Production environment variables.
+6. **Deploy:** `vercel deploy --prod --yes`. Never set `NEXT_PUBLIC_DEMO` in production.
 
 ## Fee-engine stats (MongoDB)
 
-The crank saves this as one document (`_id: "current"`) in the `stats` collection of the `midterms2026` database after every cycle. `/api/stats` returns it, cached for a minute at Vercel's edge, so the database sees about one read a minute:
+The crank saves this as one document (`_id: "current"`) in the `stats` collection of the `midterms2026` database after every cycle. `/api/stats/` returns it, cached for 30 seconds at Vercel's edge:
 
 ```json
 {
   "totalBurned": 0,
   "totalSolRouted": 0,
   "solToBurn": 0,
-  "solToLp": 0,
-  "solToMarketing": 0,
+  "solToDev": 0,
   "cycles": 0,
   "lastCycleAt": null,
   "nextCycleAt": null,
-  "cycleIntervalMs": 3600000,
+  "cycleIntervalMs": 900000,
   "capturedAt": null,
   "holders": {
     "<mint>": { "count": 1049, "change24h": -30 }
@@ -57,10 +60,9 @@ The crank saves this as one document (`_id: "current"`) in the `stats` collectio
 }
 ```
 
-- `totalBurned` is in $PRESIDENT tokens; the SOL fields are in SOL; times are ISO strings.
-- `holders` is optional. When it's present, holder counts appear on the $PRESIDENT page, the candidates board and the coin cards.
+- `totalBurned` is in $MIDTERMS tokens; the SOL fields are in SOL; times are ISO strings.
+- `holders` is optional. When it's present, holder counts appear on the $MIDTERMS page, the candidates board and the coin cards.
 - Until `nextCycleAt` is set, the site shows "Burns start at launch" instead of a countdown.
-- `/api/stats` returns `503` when `MONGODB_URI` isn't set and `404` before the crank's first live cycle; the site shows those as "starts at launch" / "—".
 
 ## Voter Card files
 
@@ -69,17 +71,21 @@ The schema is documented at the top of `src/config/voters.ts`. In short:
 - `board-meta.json`: `{ "totalEntries": 9966, "pageCount": 200, "pageSize": 50 }`
 - `board-{n}.json`: `{ "entries": [{ "rank": 1, "owner": "<wallet>", "band": "ELECTOR", "badges": ["REGISTERED"] }], "resolvedResultBadges": [] }`
 
-Host them at `VOTER_CARD.rosterUrl`, then set `VOTER_CARD.enabled: true` in `src/config/site.ts`. Until then, the page shows "The rolls open when $PRESIDENT launches" plus the tiers and badges explainer.
+Host them at `VOTER_CARD.rosterUrl`, then set `VOTER_CARD.enabled: true` in `src/config/site.ts`. Until then, the page shows the "rolls open at launch" state plus the tiers and badges explainer.
 
-## Running the race
+## Election night
 
-- **Someone drops out:** set `status: "out"`, `outAt` (the stage, e.g. `"early"`) and optionally `outDate: "2027-09-14"` in `src/config/candidates.ts`. They're greyed out everywhere, stop on the road at that stage, and appear in the calendar.
-- **Someone declares, wins a nomination, or wins:** set `status` to `"running"`, `"nominee"`, or `"winner"`. Ballots score automatically against nominees and the winner.
-- **New candidate:** add a line to `CANDIDATES`, a photo to `public/candidates/<id>.jpg`, and a credit line to `src/config/photos.ts`. For live odds, set `polymarketId` (market ids are listed at `https://gamma-api.polymarket.com/events?slug=presidential-election-winner-2028`).
-- **The race moves on:** set `CURRENT_STAGE` in `src/config/race.ts`.
-- **Calendar:** add or date events in `EVENTS` in `src/config/race.ts`, and set `result` once an event is decided.
+- **A race is called:** set the winner's `status` to `"won"` and the other candidate's to `"lost"` in `src/config/candidates.ts`. The race card shows the winner, and ballots score themselves.
+- **Control is called:** set `house` or `senate` in `CONTROL` in `src/config/race.ts` to `"R"` or `"D"`. The bars lock to the result and ballots score those calls.
+- **The night moves on:** set `CURRENT_STAGE` in `src/config/race.ts`.
+- **Calendar:** edit `EVENTS` in `src/config/race.ts`, and set `result` once an event is decided.
+- **New candidate:** add a line to `CANDIDATES`, a photo to `public/candidates/<id>.jpg` and a credit to `src/config/photos.ts`. Market ids are listed at `https://gamma-api.polymarket.com/events?slug=<race event slug>`.
 
-Redeploy with `vercel --prod` after any change.
+Redeploy with `vercel deploy --prod --yes` after any change.
+
+## Brand
+
+`brand/` holds the scripts that draw the seal, X banner, share card, icons and X post graphic. See `brand/README.md`.
 
 ## Local development
 

@@ -11,6 +11,6 @@ export const metadata: Metadata = {
   ...share(`$${SITE.ticker} | ${SITE.name}`, description),
 };
 
-export default function PresidentPage() {
+export default function MidtermsPage() {
   return <MainToken />;
 }

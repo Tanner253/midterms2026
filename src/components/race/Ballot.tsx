@@ -1,29 +1,36 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { PARTIES, isAlive } from "@/config/candidates";
+import { useCallback, useEffect, useState } from "react";
+import { PARTIES } from "@/config/candidates";
+import { CONTROL, RACES, type Chamber, type Office, type RaceId } from "@/config/race";
 import { BALLOT, SITE } from "@/config/site";
 import { fmtOdds } from "@/lib/format";
-import { useCandidateRows } from "@/lib/market-context";
-import { EMPTY_BALLOT, ballotCandidate, cleanBallot, decodeBallot, encodeBallot, scoreBallot, type Ballot as B } from "@/lib/race";
+import { useCandidateRows, type CandidateRow } from "@/lib/market-context";
+import { EMPTY_BALLOT, cleanBallot, decodeBallot, encodeBallot, isComplete, raceWinner, racesFor, scoreBallot, type Ballot as B, type ControlPick } from "@/lib/race";
 import Avatar from "../Avatar";
 import { IconX } from "../icons";
-import Seal from "../Seal";
 import { Sticker, VotedCelebration } from "./VotedSticker";
 
-const DRAFT_KEY = "p28-ballot-v1";
-type Slot = keyof B;
-const SLOTS: { key: Slot; label: string }[] = [
-  { key: "R", label: "Republican nominee" },
-  { key: "D", label: "Democratic nominee" },
-  { key: "P", label: "Next President" },
+const DRAFT_KEY = "mt26-ballot-v1";
+const CHAMBERS: { key: Chamber; label: string }[] = [
+  { key: "house", label: "House winner" },
+  { key: "senate", label: "Senate winner" },
 ];
+const OFFICES: Office[] = ["Senate", "Governor"];
+const SIDES: ControlPick[] = ["R", "D"];
 
-// WC's bracket challenge, election-sized: call both nominees and the winner, share it, get scored as it plays out.
+const Verdict = ({ right }: { right: boolean }) => (
+  <span className={`absolute right-1.5 top-1.5 z-10 px-2 py-0.5 font-narrow text-xs font-bold uppercase ${right ? "bg-lime text-ink" : "bg-red-hot text-cream"}`}>
+    {right ? "✓ Called it" : "✗ Missed"}
+  </span>
+);
+
+// WC's bracket challenge, midterm-sized: call the House, the Senate and every race, share it, get
+// scored as the results come in.
 export default function Ballot() {
+  const rows = useCandidateRows();
   const [ballot, setBallot] = useState<B>(EMPTY_BALLOT);
   const [shared, setShared] = useState<B | null>(null);
-  const [picking, setPicking] = useState<Slot | null>(null);
   const [copied, setCopied] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
   const endCelebration = useCallback(() => setCelebrate(false), []);
@@ -38,7 +45,7 @@ export default function Ballot() {
   const update = (next: B) => {
     const b = cleanBallot(next);
     // Celebrate the moment a ballot becomes complete, not when a saved one loads.
-    if (!(ballot.R && ballot.D && ballot.P) && b.R && b.D && b.P) setCelebrate(true);
+    if (!isComplete(ballot) && isComplete(b)) setCelebrate(true);
     setBallot(b);
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(b));
@@ -53,20 +60,20 @@ export default function Ballot() {
   };
 
   const shown = shared ?? ballot;
-  const complete = !!(shown.R && shown.D && shown.P);
+  const complete = isComplete(shown);
+  const picked = Object.keys(shown.picks).length + (shown.house ? 1 : 0) + (shown.senate ? 1 : 0);
+  const total = RACES.length + CHAMBERS.length;
   const score = scoreBallot(shown);
-  const president = ballotCandidate(shown.P);
   const link = typeof window === "undefined" ? "" : `${window.location.origin}/race/?view=ballot&b=${encodeBallot(shown)}`;
-  const tweet = president
-    ? `My 2028 call: ${president.name} takes the White House. Make yours on ${SITE.name} $${SITE.ticker}`
-    : `Calling the 2028 race on ${SITE.name} $${SITE.ticker}`;
+  const call = shown.house && shown.senate ? `${PARTIES[shown.house].plural} take the House, ${PARTIES[shown.senate].plural} take the Senate` : null;
+  const tweet = call ? `My midterms call: ${call}. Make yours on ${SITE.name} $${SITE.ticker}` : `Calling the midterms on ${SITE.name} $${SITE.ticker}`;
 
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="font-slab text-[clamp(30px,5vw,56px)] uppercase leading-none">Call the race</h2>
-          <p className="mt-2 max-w-xl text-cream/75">Pick both nominees and the next president. Share your ballot and watch it score as the race plays out.</p>
+          <p className="mt-2 max-w-xl text-cream/75">Pick the House, the Senate and every race on the board. Share your ballot and watch it score as the results come in.</p>
         </div>
         {shared && (
           <button type="button" onClick={makeOwn} className="border-2 border-cream px-4 py-2 font-narrow font-bold uppercase tracking-[0.14em] hover:bg-cream hover:text-ink">
@@ -92,50 +99,65 @@ export default function Ballot() {
         <div className="mb-4 bg-gold px-4 py-2 font-narrow text-sm font-bold uppercase tracking-[0.16em] text-ink">Shared ballot · read only</div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {SLOTS.map((s) => {
-          const c = ballotCandidate(shown[s.key]);
-          const truth = score.truth[s.key];
-          const verdict = truth && c ? (truth === c.id ? "right" : "wrong") : null;
+      <div className="grid gap-4 md:grid-cols-2">
+        {CHAMBERS.map(({ key, label }) => {
+          const truth = CONTROL[key];
+          const pick = shown[key];
           return (
-            <button
-              key={s.key}
-              type="button"
-              disabled={!!shared}
-              onClick={() => setPicking(s.key)}
-              className={`relative flex min-h-[200px] flex-col items-center justify-center gap-3 border-[3px] p-4 text-center transition ${
-                s.key === "P" ? "border-gold bg-ink shadow-brutal-gold" : "border-cream bg-ink-2 shadow-brutal-md"
-              } ${shared ? "cursor-default" : "hover:-translate-x-1 hover:-translate-y-1"}`}
-            >
-              <span className="font-narrow text-xs font-bold uppercase tracking-[0.24em] text-gold">{s.label}</span>
-              {c ? (
-                <>
-                  <Avatar c={c} size={76} />
-                  <span className="font-slab text-xl uppercase leading-tight">{c.name}</span>
-                </>
-              ) : (
-                <>
-                  {s.key === "P" ? <Seal size={64} /> : <span className="flex h-[76px] w-[76px] items-center justify-center rounded-full border-[3px] border-dashed border-cream/40 font-slab text-3xl text-cream/50">?</span>}
-                  <span className="font-narrow font-bold uppercase tracking-[0.16em] text-cream/60">{shared ? "No pick" : "Tap to pick"}</span>
-                </>
-              )}
-              {verdict && (
-                <span className={`absolute right-2 top-2 px-2 py-0.5 font-narrow text-xs font-bold uppercase ${verdict === "right" ? "bg-lime text-ink" : "bg-red-hot text-cream"}`}>
-                  {verdict === "right" ? "✓ Called it" : "✗ Missed"}
-                </span>
-              )}
-            </button>
+            <div key={key} className="relative border-[3px] border-gold bg-ink p-4 shadow-brutal-gold">
+              {truth && pick && <Verdict right={truth === pick} />}
+              <div className="mb-3 font-narrow text-xs font-bold uppercase tracking-[0.24em] text-gold">{label}</div>
+              <div className="grid grid-cols-2 gap-3">
+                {SIDES.map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    disabled={!!shared}
+                    aria-pressed={pick === p}
+                    onClick={() => update({ ...ballot, [key]: p })}
+                    className={`min-h-[64px] border-[3px] px-2 py-3 font-slab text-[clamp(15px,2.4vw,22px)] uppercase leading-tight transition ${
+                      pick === p ? "border-cream" : "border-ink bg-ink-3 text-cream/70"
+                    } ${shared ? "cursor-default" : "hover:-translate-y-0.5"}`}
+                    style={pick === p ? { background: PARTIES[p].color, color: PARTIES[p].on } : undefined}
+                  >
+                    {PARTIES[p].plural}
+                  </button>
+                ))}
+              </div>
+            </div>
           );
         })}
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+      {OFFICES.map((office) => (
+        <section key={office} className="mt-8">
+          <h3 className="mb-3 flex items-center gap-2 font-narrow text-sm font-bold uppercase tracking-[0.28em] text-gold">
+            <span aria-hidden="true" className="h-1 w-3 bg-gold" />
+            {office}
+          </h3>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {racesFor(office).map((race) => (
+              <RacePick
+                key={race.id}
+                id={race.id}
+                label={race.label}
+                rows={rows.filter((r) => r.race === race.id)}
+                pick={shown.picks[race.id] ?? null}
+                locked={!!shared}
+                onPick={(c) => update({ ...ballot, picks: { ...ballot.picks, [race.id]: c } })}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
+
+      <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
         <div className="border-[3px] border-cream/30 bg-ink-2 px-4 py-3">
           <div className="font-narrow text-xs font-bold uppercase tracking-[0.24em] text-cream/60">Ballot vs reality</div>
           <div className="font-slab text-xl uppercase">
-            {score.decided ? `${score.right}/${score.decided} calls right so far` : "Nothing decided yet"}
+            {score.decided ? `${score.right}/${score.decided} calls right so far` : complete ? "Nothing decided yet" : `${picked}/${total} picks made`}
           </div>
-          <p className="mt-1 text-sm text-cream/60">Calls are scored only once the race decides them: nominees at the conventions, the winner on Nov 7, 2028.</p>
+          <p className="mt-1 text-sm text-cream/60">Calls are scored only once they're decided: each race as it's called, the House and Senate once control is called.</p>
         </div>
         {complete && (
           <div className="flex flex-wrap gap-2">
@@ -165,18 +187,47 @@ export default function Ballot() {
         )}
       </div>
 
-      {complete && president && !shared && (
+      {complete && call && !shared && (
         <div className="mt-8 flex flex-col items-center justify-center gap-4 text-center sm:flex-row sm:text-left">
           <Sticker size={96} className="shrink-0 -rotate-6 drop-shadow-[4px_5px_0_rgba(0,0,0,0.45)]" />
-          <p className="font-slab text-[clamp(24px,4vw,40px)] uppercase leading-tight">
-            <span className="text-gold">{president.name}</span> takes the White House
+          <p className="font-slab text-[clamp(22px,3.4vw,36px)] uppercase leading-tight">
+            <span className="text-gold">{call}</span>
           </p>
         </div>
       )}
 
       {celebrate && <VotedCelebration onDone={endCelebration} />}
+    </div>
+  );
+}
 
-      {picking && <Picker slot={picking} ballot={ballot} onClose={() => setPicking(null)} onPick={(id) => update({ ...ballot, [picking]: id })} />}
+// One race on the ballot: tap a candidate to pick them.
+function RacePick({ id, label, rows, pick, locked, onPick }: { id: RaceId; label: string; rows: CandidateRow[]; pick: string | null; locked: boolean; onPick: (candidate: string) => void }) {
+  const winner = raceWinner(id);
+  return (
+    <div className="relative border-[3px] border-cream bg-ink-2 shadow-brutal-md">
+      {winner && pick && <Verdict right={winner.id === pick} />}
+      <div className="border-b-[3px] border-cream/20 px-3 py-2 font-slab text-sm uppercase">{label}</div>
+      <div className="grid grid-cols-2">
+        {rows.map((r) => (
+          <button
+            key={r.id}
+            type="button"
+            disabled={locked}
+            aria-pressed={pick === r.id}
+            onClick={() => onPick(r.id)}
+            className={`flex min-w-0 flex-col items-center gap-1.5 p-3 text-center transition [&:first-child]:border-r-2 [&:first-child]:border-cream/15 ${
+              pick === r.id ? "bg-gold text-ink" : locked ? "" : "hover:bg-cream/10"
+            } ${locked ? "cursor-default" : ""}`}
+          >
+            <Avatar c={r} size={52} />
+            <span className="w-full font-bold uppercase leading-tight">{r.name}</span>
+            <span className={`font-narrow text-xs font-bold uppercase tracking-[0.14em] ${pick === r.id ? "text-ink/70" : "text-cream/60"}`}>
+              {PARTIES[r.party].short} · {fmtOdds(r.odds)}
+            </span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -193,76 +244,5 @@ function NativeShare({ text, url }: { text: string; url: string }) {
     >
       Share…
     </button>
-  );
-}
-
-function Picker({ slot, ballot, onClose, onPick }: { slot: Slot; ballot: B; onClose: () => void; onPick: (id: string) => void }) {
-  const rows = useCandidateRows();
-  const panel = useRef<HTMLDivElement>(null);
-  const finalists = new Set([ballot.R, ballot.D].filter(Boolean));
-  const options = rows
-    .filter((r) => (slot === "P" ? finalists.has(r.id) || r.party === "I" : r.party === slot))
-    .sort((a, b) => Number(isAlive(b)) - Number(isAlive(a)) || (b.odds ?? -1) - (a.odds ?? -1));
-
-  useEffect(() => {
-    panel.current?.querySelector<HTMLButtonElement>("button:not([disabled])")?.focus({ preventScroll: true });
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    document.documentElement.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.documentElement.style.overflow = "";
-    };
-  }, [onClose]);
-
-  const title = SLOTS.find((s) => s.key === slot)!.label;
-  return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/80 p-3 sm:items-center" onClick={onClose}>
-      <div
-        ref={panel}
-        role="dialog"
-        aria-modal="true"
-        aria-label={`Pick the ${title}`}
-        onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[85vh] w-full max-w-[560px] flex-col border-[3px] border-cream bg-ink-2 shadow-brutal-gold"
-      >
-        <div className="flex items-center justify-between border-b-[3px] border-cream/20 px-4 py-3">
-          <span className="font-slab text-xl uppercase">Pick the {title}</span>
-          <button type="button" onClick={onClose} aria-label="Close" className="px-2 py-1 font-slab text-xl text-cream/70 hover:text-cream">
-            ✕
-          </button>
-        </div>
-        {slot === "P" && finalists.size < 2 && (
-          <p className="border-b-2 border-cream/10 px-4 py-2 text-sm text-gold">Pick both nominees first to choose between them (or back an independent).</p>
-        )}
-        <ul className="overflow-y-auto p-2">
-          {options.map((r) => (
-            <li key={r.id}>
-              <button
-                type="button"
-                disabled={!isAlive(r)}
-                onClick={() => {
-                  onPick(r.id);
-                  onClose();
-                }}
-                className={`flex w-full items-center gap-3 px-3 py-2 text-left transition hover:bg-cream/10 disabled:cursor-not-allowed disabled:opacity-40 ${
-                  ballot[slot] === r.id ? "bg-gold/15 outline outline-2 outline-gold" : ""
-                }`}
-              >
-                <Avatar c={r} size={40} />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-bold uppercase">{r.name}</span>
-                  <span className="font-narrow text-xs font-bold uppercase tracking-[0.14em] text-cream/60">
-                    {PARTIES[r.party].short} · ${r.ticker}
-                    {!isAlive(r) && " · Out"}
-                  </span>
-                </span>
-                <span className="font-mono text-sm text-gold">{fmtOdds(r.odds)}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
   );
 }

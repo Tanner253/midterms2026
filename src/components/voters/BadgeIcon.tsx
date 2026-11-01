@@ -22,7 +22,7 @@ const GLYPHS: Record<BadgeKey, React.ReactNode> = {
       <path d="M12 6v12M10 18l2-4 2 4" />
     </>
   ),
-  NOMINEE: (
+  SEAT_WINNER: (
     <>
       <path d="M8 6h8v4a4 4 0 0 1-8 0z" />
       <path d="M12 14v3M9 18h6" />
@@ -34,7 +34,7 @@ const GLYPHS: Record<BadgeKey, React.ReactNode> = {
       <path d="m9.5 12.5-1.5 6 4-2 4 2-1.5-6" />
     </>
   ),
-  PRESIDENT_ELECT: (
+  MAJORITY: (
     <>
       <path d="M5 18h14M6 18v-6M10 18v-6M14 18v-6M18 18v-6M4 12h16L12 6z" />
     </>

@@ -6,7 +6,7 @@ import { PHOTOS } from "@/config/photos";
 
 // Candidate portrait (or initials). Round avatars are drawn as pin-back campaign buttons:
 // party-colour rim, cream inner ring, glossy highlight, and a little tilt on hover.
-// `square` for table cells; `dim` greys out dropped-out candidates (pass dim={false}
+// `square` for table cells; `dim` greys out candidates who lost (pass dim={false}
 // when the parent row/card already fades them).
 export default function Avatar({
   c,
@@ -27,7 +27,7 @@ export default function Avatar({
     <span
       className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden font-slab ${
         square ? "" : "rounded-full shadow-[0_2px_0_rgba(0,0,0,0.45)] transition-transform duration-200 hover:-rotate-[8deg] hover:scale-105"
-      } ${dim && c.status === "out" ? "grayscale" : ""}`}
+      } ${dim && c.status === "lost" ? "grayscale" : ""}`}
       style={{
         width: size,
         height: size,

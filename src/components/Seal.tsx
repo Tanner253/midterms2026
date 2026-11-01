@@ -1,4 +1,4 @@
-// The $PRESIDENT seal (public/brand/seal.png, rendered from the brand artwork).
+// The $MIDTERMS seal (public/brand/seal.png, rendered from the brand artwork).
 export default function Seal({ size = 48, className = "" }: { size?: number; className?: string }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element

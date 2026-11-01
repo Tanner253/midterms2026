@@ -15,7 +15,7 @@ const narrow = Barlow_Condensed({ weight: ["500", "600", "700"], subsets: ["lati
 const inter = Inter({ subsets: ["latin"], variable: "--ff-inter" });
 const mono = JetBrains_Mono({ weight: ["500", "700"], subsets: ["latin"], variable: "--ff-mono" });
 
-const description = `Every 2028 candidate on-chain. One memecoin per name in the race, all feeding $${SITE.ticker}. Exclusively on pump.fun.`;
+const description = `The 2026 midterms on-chain. One memecoin per candidate in the 12 biggest races, all feeding $${SITE.ticker}. Exclusively on pump.fun.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),

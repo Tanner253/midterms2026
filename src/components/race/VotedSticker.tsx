@@ -8,7 +8,7 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 export function Sticker({ size = 200, className = "" }: { size?: number; className?: string }) {
   const clip = useId();
   return (
-    <svg viewBox="0 0 200 200" width={size} height={size} className={className} role="img" aria-label="I voted 2028 sticker">
+    <svg viewBox="0 0 200 200" width={size} height={size} className={className} role="img" aria-label="I voted 2026 sticker">
       <defs>
         <clipPath id={clip}>
           <circle cx="100" cy="100" r="88" />
@@ -46,7 +46,7 @@ export function Sticker({ size = 200, className = "" }: { size?: number; classNa
         I VOTED
       </text>
       <text x="100" y="124" textAnchor="middle" fontFamily="var(--ff-narrow), sans-serif" fontWeight="700" fontSize="15" letterSpacing="3" fill="#0b1b42">
-        ON-CHAIN · 2028
+        ON-CHAIN · 2026
       </text>
     </svg>
   );

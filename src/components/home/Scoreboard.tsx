@@ -5,6 +5,7 @@ import { CANDIDATES, isAlive } from "@/config/candidates";
 import { CURRENT_STAGE, nextDatedEvent, stageLabel, upcomingEvents } from "@/config/race";
 import { SITE } from "@/config/site";
 import { fmtDate } from "@/lib/format";
+import { CYCLE_MS } from "@/lib/market";
 import { useMarket } from "@/lib/market-context";
 import { pad2, splitDuration, useNow } from "@/lib/useNow";
 import { useReducedMotion } from "@/lib/useReducedMotion";
@@ -97,7 +98,7 @@ function NextBigDay() {
         <FlipTile size="lg" value={d ? pad2(d.secs) : "—"} unit="Secs" />
       </div>
       <p className="mt-4 font-narrow text-base font-bold uppercase tracking-[0.18em] text-cream/85">
-        {event ? `${event.title} · ${fmtDate(event.date!, true)}` : "Election Day · Nov 7, 2028"}
+        {event ? `${event.title} · ${fmtDate(event.date!, true)}` : "Election Day · Nov 3, 2026"}
       </p>
     </>
   );
@@ -106,7 +107,7 @@ function NextBigDay() {
 function NextBurn() {
   const { stats } = useMarket();
   const now = useNow();
-  const target = now === null ? null : nextCycleTarget(stats?.nextCycleAt, stats?.cycleIntervalMs ?? 3_600_000, now);
+  const target = now === null ? null : nextCycleTarget(stats?.nextCycleAt, stats?.cycleIntervalMs ?? CYCLE_MS, now);
   const d = now !== null && target !== null ? splitDuration(target - now) : null;
   return (
     <>
@@ -125,7 +126,7 @@ function NextBurn() {
         </div>
       )}
       <p className="mt-4 font-narrow text-sm font-bold uppercase tracking-[0.18em] text-cream/70">
-        Creator fees claimed &amp; routed on-chain every cycle
+        Creator fees claimed &amp; burned on-chain every 15 minutes
       </p>
     </>
   );
@@ -151,7 +152,7 @@ function Remaining() {
           </li>
         ))}
       </ul>
-      <p className="mt-3 font-narrow text-sm font-bold uppercase tracking-[0.22em] text-red-hot">Drop out and go home</p>
+      <p className="mt-3 font-narrow text-sm font-bold uppercase tracking-[0.22em] text-red-hot">12 races · one seat each</p>
     </>
   );
 }

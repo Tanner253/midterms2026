@@ -44,3 +44,7 @@ next-env.d.ts
 
 # Local preview mode (fake numbers) is safe to share
 !.env.development
+
+# brand kit
+brand/node_modules
+brand/out

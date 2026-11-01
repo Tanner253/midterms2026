@@ -5,7 +5,7 @@ import Hero from "@/components/home/Hero";
 import Movers from "@/components/home/Movers";
 import Pairing from "@/components/home/Pairing";
 import Chyron from "@/components/home/Chyron";
-import RaceTo270 from "@/components/home/RaceTo270";
+import RaceToControl from "@/components/home/RaceToControl";
 
 export default function Home() {
   return (
@@ -13,7 +13,7 @@ export default function Home() {
       <Hero />
       <BuyBand />
       <Chyron />
-      <RaceTo270 />
+      <RaceToControl />
       <EngineSteps />
       <Pairing />
       <Announcement />

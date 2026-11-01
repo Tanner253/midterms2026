@@ -1,74 +1,64 @@
-import { CANDIDATES, isAlive, type Candidate, type Party } from "@/config/candidates";
-import { CURRENT_STAGE, stageIndex, type StageId } from "@/config/race";
+import { CANDIDATES } from "@/config/candidates";
+import { CONTROL, RACES, type Chamber, type Office, type RaceId } from "@/config/race";
 
-// The road to the White House as bracket columns (WC's knockout rounds).
-// Each column covers one or more race stages.
-export const ROAD = [
-  { id: "field", label: "The Field", short: "Field", stages: ["field", "debates"] },
-  { id: "early", label: "Early States", short: "Early", stages: ["early"] },
-  { id: "super", label: "Super Tuesday", short: "Super Tue", stages: ["super", "primaries"] },
-  { id: "nominee", label: "Nominee", short: "Nominee", stages: ["conventions"] },
-] as const satisfies readonly { id: string; label: string; short: string; stages: readonly StageId[] }[];
-
-export type RoadId = (typeof ROAD)[number]["id"];
-
-const columnOf = (stage: StageId) => ROAD.findIndex((col) => (col.stages as readonly StageId[]).includes(stage));
-
-// Index of the furthest road column the race itself has reached (election day = past the last column).
-export const currentColumn = () => (CURRENT_STAGE === "general" ? ROAD.length : columnOf(CURRENT_STAGE));
-
-// Furthest column a candidate reached. Nominees and the winner made it all the way.
-export function reachedColumn(c: Candidate) {
-  if (c.status === "nominee" || c.status === "winner") return ROAD.length - 1;
-  if (c.status === "out") return c.outAt ? Math.max(0, columnOf(c.outAt)) : 0;
-  return Math.min(currentColumn(), ROAD.length - 2);
-}
-
-export const nomineeOf = (party: Party) =>
-  CANDIDATES.find((c) => c.party === party && (c.status === "nominee" || c.status === "winner"));
-export const winner = () => CANDIDATES.find((c) => c.status === "winner");
-
-// Higher = lasted longer. Used to order lists (winner, nominees, still in, then by how late they dropped out).
-export function survival(c: Candidate) {
-  if (c.status === "winner") return 100;
-  if (c.status === "nominee") return 90;
-  if (isAlive(c)) return 80;
-  return c.outAt ? stageIndex(c.outAt) : 0;
-}
+export const racesFor = (office: Office) => RACES.filter((r) => r.office === office);
+export const raceCandidates = (id: RaceId) => CANDIDATES.filter((c) => c.race === id);
+export const raceWinner = (id: RaceId) => raceCandidates(id).find((c) => c.status === "won");
+export const calledRaces = () => RACES.filter((r) => raceWinner(r.id));
 
 // ---- "Call the race" ballot
 
-export type Ballot = { R: string | null; D: string | null; P: string | null };
-export const EMPTY_BALLOT: Ballot = { R: null, D: null, P: null };
+export type ControlPick = "R" | "D";
+export type Ballot = { house: ControlPick | null; senate: ControlPick | null; picks: Partial<Record<RaceId, string>> };
+export const EMPTY_BALLOT: Ballot = { house: null, senate: null, picks: {} };
 
-const byId = (id: string | null) => (id ? CANDIDATES.find((c) => c.id === id) : undefined);
-export const ballotCandidate = byId;
+export const ballotCandidate = (id: string | null | undefined) => (id ? CANDIDATES.find((c) => c.id === id) : undefined);
 
-// Drop picks that no longer make sense (unknown ids, wrong party, president not among the finalists).
+const asControl = (v: unknown): ControlPick | null => (v === "R" || v === "D" ? v : null);
+
+// Drop picks that no longer make sense (unknown ids, or a candidate from another race).
 export function cleanBallot(b: Partial<Ballot> | null | undefined): Ballot {
-  const R = byId(b?.R ?? null)?.party === "R" ? b!.R! : null;
-  const D = byId(b?.D ?? null)?.party === "D" ? b!.D! : null;
-  const p = byId(b?.P ?? null);
-  const P = p && (p.id === R || p.id === D || p.party === "I") ? p.id : null;
-  return { R, D, P };
+  const picks: Ballot["picks"] = {};
+  for (const r of RACES) {
+    const id = b?.picks?.[r.id];
+    if (ballotCandidate(id)?.race === r.id) picks[r.id] = id;
+  }
+  return { house: asControl(b?.house), senate: asControl(b?.senate), picks };
 }
 
-// Share code: candidate ids joined by "." (empty slot = "-"), e.g. "vance.newsom.vance".
-export const encodeBallot = (b: Ballot) => [b.R, b.D, b.P].map((x) => x ?? "-").join(".");
+export const isComplete = (b: Ballot) => !!b.house && !!b.senate && RACES.every((r) => b.picks[r.id]);
+
+// Share code: House and Senate letters, a dot, then one digit per race (which of its two candidates,
+// "-" for no pick), e.g. "DR.010-10101010".
+export function encodeBallot(b: Ballot) {
+  const races = RACES.map((r) => {
+    const i = raceCandidates(r.id).findIndex((c) => c.id === b.picks[r.id]);
+    return i < 0 ? "-" : String(i);
+  });
+  return `${b.house ?? "-"}${b.senate ?? "-"}.${races.join("")}`;
+}
+
 export function decodeBallot(code: string | null): Ballot | null {
   if (!code) return null;
-  const [R, D, P] = code.split(".").map((x) => (x && x !== "-" ? x : null));
-  const b = cleanBallot({ R, D, P });
-  return b.R || b.D || b.P ? b : null;
+  const [control = "", races = ""] = code.split(".");
+  const picks: Ballot["picks"] = {};
+  RACES.forEach((r, i) => {
+    const c = raceCandidates(r.id)[Number(races[i])];
+    if (c) picks[r.id] = c.id;
+  });
+  const b = cleanBallot({ house: asControl(control[0]), senate: asControl(control[1]), picks });
+  return b.house || b.senate || Object.keys(b.picks).length ? b : null;
 }
 
 // Picks scored only where reality has decided: right / decided.
 export function scoreBallot(b: Ballot) {
-  const truth: Ballot = { R: nomineeOf("R")?.id ?? null, D: nomineeOf("D")?.id ?? null, P: winner()?.id ?? null };
-  const slots = (["R", "D", "P"] as const).filter((k) => truth[k]);
+  const called = RACES.flatMap((r) => {
+    const w = raceWinner(r.id);
+    return w ? [{ race: r.id, id: w.id }] : [];
+  });
+  const chambers = (["house", "senate"] as Chamber[]).filter((k) => CONTROL[k]);
   return {
-    truth,
-    decided: slots.length,
-    right: slots.filter((k) => b[k] === truth[k]).length,
+    decided: called.length + chambers.length,
+    right: called.filter((c) => b.picks[c.race] === c.id).length + chambers.filter((k) => b[k] === CONTROL[k]).length,
   };
 }

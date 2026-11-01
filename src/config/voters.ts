@@ -1,8 +1,8 @@
 /*
-  Voter Card (WC's Passport): a read-only leaderboard of every wallet on the 2028 rolls.
+  Voter Card (WC's Passport): a read-only leaderboard of every wallet on the 2026 rolls.
 
   The claim process publishes these files under VOTER_CARD.rosterUrl (default /data/roster/),
-  on the same hourly cycle as the fee-engine stats, and stops updating them once the polls close:
+  on the same 15-minute cycle as the fee-engine stats, and stops updating them once the polls close:
 
   board-meta.json
     { "totalEntries": 9966, "pageCount": 200, "pageSize": 50 }
@@ -12,7 +12,7 @@
       "entries": [
         { "rank": 1, "owner": "<base58 wallet>", "band": "ELECTOR", "badges": ["REGISTERED", "STANDARD_BEARER"] }
       ],
-      "resolvedResultBadges": ["NOMINEE"],          // optional, defaults to []
+      "resolvedResultBadges": ["SEAT_WINNER"],          // optional, defaults to []
       "page": 1, "pageSize": 50, "totalEntries": 9966, "totalPages": 200   // optional echoes
     }
 
@@ -55,29 +55,29 @@ type BadgeDef = {
 // Canonical order: the badge strip always shows these slots in this order.
 export const BADGES = [
   { key: "REGISTERED", label: "Registered", how: "made the rolls", kind: "standing" },
-  { key: "STANDARD_BEARER", label: "Standard-Bearer", how: "carried $president", kind: "standing" },
-  { key: "DIE_HARD", label: "Die-Hard", how: "held on after they dropped out", kind: "standing" },
+  { key: "STANDARD_BEARER", label: "Standard-Bearer", how: "carried $midterms", kind: "standing" },
+  { key: "DIE_HARD", label: "Die-Hard", how: "held on after their race was called against them", kind: "standing" },
   { key: "BIG_TENT", label: "Big Tent", how: "five candidates, one wallet", kind: "standing" },
   {
-    key: "NOMINEE",
-    label: "Nominee",
-    how: "held a party's nominee when they were crowned",
+    key: "SEAT_WINNER",
+    label: "Seat Winner",
+    how: "held a candidate when their race was called for them",
     kind: "result",
-    resolvesAt: "resolves at the conventions",
+    resolvesAt: "resolves as races are called",
   },
   {
     key: "RUNNER_UP",
     label: "Runner-Up",
-    how: "held the runner-up when the race was called",
+    how: "held the runner-up when their race was called",
     kind: "result",
-    resolvesAt: "resolves election night",
+    resolvesAt: "resolves as races are called",
   },
   {
-    key: "PRESIDENT_ELECT",
-    label: "President-Elect",
-    how: "held the winner when the race was called",
+    key: "MAJORITY",
+    label: "Majority",
+    how: "held the party that took the House or the Senate",
     kind: "result",
-    resolvesAt: "resolves election night",
+    resolvesAt: "resolves when control is called",
   },
   { key: "MYSTERY", label: "?", how: "?", kind: "mystery" },
 ] as const satisfies readonly BadgeDef[];

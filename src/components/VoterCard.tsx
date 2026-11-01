@@ -92,7 +92,7 @@ export default function VoterCard() {
       <PageHero
         variant="navy"
         kicker="Earlier and steadier ranks higher"
-        title="2028 Voter Card"
+        title="2026 Voter Card"
         subtitle="Every wallet holding the race gets a place on the rolls. Your tier can fall until the polls close."
       >
         <div className="mt-6 flex flex-wrap gap-2">
@@ -149,7 +149,7 @@ export default function VoterCard() {
             )}
             <div aria-live="polite" className="mt-3 min-h-[1.5rem] font-narrow font-bold uppercase tracking-[0.14em]">
               {lookup.state === "invalid" && <span className="text-red-hot">That isn&apos;t a Solana address.</span>}
-              {lookup.state === "missing" && <span className="text-red-hot">Not registered · this address isn&apos;t on the 2028 rolls.</span>}
+              {lookup.state === "missing" && <span className="text-red-hot">Not registered · this address isn&apos;t on the 2026 rolls.</span>}
               {lookup.state === "error" && <span className="text-red-hot">Lookup failed. Try again.</span>}
               {lookup.state === "found" && <span className="text-gold">Found it · page {pageNo}</span>}
             </div>

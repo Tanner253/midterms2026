@@ -1,6 +1,8 @@
 import type { LaunchedCoin } from "./coins";
 
 export const MAIN_KEY = "__main";
+// The crank's cycle, used until its stats say otherwise.
+export const CYCLE_MS = 900_000;
 // Set in .env.development so `npm run dev` shows fake numbers; never set for production.
 export const DEMO = process.env.NEXT_PUBLIC_DEMO === "1";
 
@@ -18,8 +20,7 @@ export type EngineStats = {
   totalBurned: number;
   totalSolRouted: number;
   solToBurn: number;
-  solToLp: number;
-  solToMarketing: number;
+  solToDev: number;
   cycles: number;
   lastCycleAt: string | null;
   nextCycleAt: string | null;
@@ -99,7 +100,7 @@ export async function fetchMarkets(entries: { key: string; mint: string }[]) {
     }
   }
   // DexScreener has no USD numbers for coins quoted in another token (candidates paired with
-  // $PRESIDENT on the bonding curve); Jupiter prices those, so fill them from there.
+  // $MIDTERMS on the bonding curve); Jupiter prices those, so fill them from there.
   const unpriced = mints.filter((m) => !(out[byMint.get(m)!]?.priceUsd > 0));
   for (let i = 0; i < unpriced.length; i += JUP_BATCH) {
     try {
@@ -147,7 +148,7 @@ export function normalizeStats(raw: unknown): EngineStats | null {
       if (count !== null) holders[mint] = { count, change24h: numOrNull(h?.change24h) };
     }
   }
-  const interval = num(r.cycleIntervalMs, 3_600_000);
+  const interval = num(r.cycleIntervalMs, CYCLE_MS);
   const coins: LaunchedCoin[] = [];
   if (Array.isArray(r.coins)) {
     for (const c of r.coins as Record<string, unknown>[]) {
@@ -161,12 +162,11 @@ export function normalizeStats(raw: unknown): EngineStats | null {
     totalBurned: num(r.totalBurned),
     totalSolRouted: num(r.totalSolRouted),
     solToBurn: num(r.solToBurn),
-    solToLp: num(r.solToLp),
-    solToMarketing: num(r.solToMarketing),
+    solToDev: num(r.solToDev),
     cycles: num(r.cycles),
     lastCycleAt: isoOrNull(r.lastCycleAt),
     nextCycleAt: isoOrNull(r.nextCycleAt),
-    cycleIntervalMs: interval > 0 ? interval : 3_600_000,
+    cycleIntervalMs: interval > 0 ? interval : CYCLE_MS,
     capturedAt: isoOrNull(r.capturedAt),
     holders,
   };
@@ -180,16 +180,23 @@ export async function fetchStats(url: string): Promise<EngineStats | null> {
 
 const GAMMA_API = "https://gamma-api.polymarket.com/markets/keyset";
 
-// Win odds per Polymarket market id.
+type GammaMarket = { id: string; slug?: string; outcomePrices?: string; oneDayPriceChange?: number; oneWeekPriceChange?: number };
+
+// Win odds per Polymarket market id. /markets/keyset leaves closed markets out unless asked for
+// them, and a market closes once its race is called, so both sets are read. A failed closed read
+// is ignored: called races show their result from candidates.ts either way.
 export async function fetchOdds(ids: string[]) {
   const out: Record<string, Odds> = {};
   if (!ids.length) return out;
-  const res = await fetch(`${GAMMA_API}?limit=100&${ids.map((id) => `id=${id}`).join("&")}`);
-  if (!res.ok) throw new Error(`polymarket ${res.status}`);
-  const body: {
-    markets?: { id: string; slug?: string; outcomePrices?: string; oneDayPriceChange?: number; oneWeekPriceChange?: number }[];
-  } = await res.json();
-  for (const m of body.markets ?? []) {
+  const query = `limit=100&${ids.map((id) => `id=${id}`).join("&")}`;
+  const [open, closed] = await Promise.all([
+    fetch(`${GAMMA_API}?${query}`),
+    fetch(`${GAMMA_API}?closed=true&${query}`).catch(() => null),
+  ]);
+  if (!open.ok) throw new Error(`polymarket ${open.status}`);
+  const body: { markets?: GammaMarket[] } = await open.json();
+  const done: { markets?: GammaMarket[] } = closed?.ok ? await closed.json().catch(() => ({})) : {};
+  for (const m of [...(body.markets ?? []), ...(done.markets ?? [])]) {
     let yes = NaN;
     try {
       yes = Number(JSON.parse(m.outcomePrices ?? "[]")[0]);
@@ -237,19 +244,17 @@ export function demoHolders(keys: string[]) {
 }
 
 export function demoStats(): EngineStats {
-  const hour = 3_600_000;
   const now = Date.now();
-  const last = Math.floor(now / hour) * hour;
+  const last = Math.floor(now / CYCLE_MS) * CYCLE_MS;
   return {
     totalBurned: 48_215_330,
     totalSolRouted: 812.4,
-    solToBurn: 520.7,
-    solToLp: 191.3,
-    solToMarketing: 100.4,
+    solToBurn: 690.5,
+    solToDev: 121.9,
     cycles: 214,
     lastCycleAt: new Date(last).toISOString(),
-    nextCycleAt: new Date(last + hour).toISOString(),
-    cycleIntervalMs: hour,
+    nextCycleAt: new Date(last + CYCLE_MS).toISOString(),
+    cycleIntervalMs: CYCLE_MS,
     capturedAt: new Date(last).toISOString(),
     holders: {},
     coins: [],
