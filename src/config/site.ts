@@ -58,41 +58,41 @@ export const ENGINE_STEPS = [
   {
     num: "01",
     title: "Claim",
-    body: `Every 5 minutes, creator fees are claimed across all ${N} candidate coins, the party coins and the main $MIDTERMS coin.`,
+    body: `Every cycle, creator fees are claimed across all ${N} candidate coins, the party coins and the main $MIDTERMS coin.`,
   },
   {
     num: "02",
-    title: "Dev cut",
-    body: "10% of every claim goes to the dev wallet. It comes off the top, once, and nothing else is taken.",
+    title: "Buy & Burn",
+    body: "A portion of the fees market-buys $MIDTERMS and permanently burns it, contracting circulating supply every cycle.",
   },
   {
     num: "03",
-    title: "Buy & Burn",
-    body: "All the rest market-buys $MIDTERMS and permanently burns it, contracting circulating supply every cycle.",
+    title: "LP",
+    body: "The LP share of the fees is 0% right now, so nothing is going into the $MIDTERMS liquidity pool yet.",
   },
   {
     num: "04",
-    title: "Burn holdings",
-    body: "Whatever the creator wallet still holds of any project coin is burned too, so it never builds up a bag.",
+    title: "Marketing",
+    body: "The marketing share of the fees is 0% right now, so nothing is going to giveaways or bounties from the engine yet.",
   },
 ] as const;
 
 export const PAIRING = {
-  title: "Every candidate feeds $MIDTERMS",
+  title: "Every candidate is paired to $MIDTERMS",
   intro:
-    "Candidate coins are tied to $MIDTERMS through the fee engine. Every trade on any candidate pays into the main coin.",
+    "Candidate coins are paired to $MIDTERMS through the fee engine. Every trade on any candidate pays into the main coin.",
   points: [
     {
       title: "Constant buy pressure",
-      body: "After the 10% dev cut, every candidate coin's fees market-buy $MIDTERMS every 5 minutes, no matter who is pumping.",
+      body: "A portion of every candidate coin's fees market-buys $MIDTERMS, every cycle, no matter who is pumping.",
     },
     {
       title: "Shrinking supply",
       body: "Every $MIDTERMS the engine buys is burned. Supply only goes one way.",
     },
     {
-      title: "Nothing held back",
-      body: "There's no LP wallet and no marketing wallet. Everything after the dev cut goes to the burn.",
+      title: "Burn first",
+      body: "The LP and marketing shares are at 0% for now, so the engine's buying all goes to the burn.",
     },
     {
       title: "The whole map in one coin",

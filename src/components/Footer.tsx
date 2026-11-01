@@ -28,7 +28,7 @@ export default function Footer() {
         <p className="max-w-4xl">
           {SITE.name} (${SITE.ticker}) is an independent memecoin project. It is not affiliated with, endorsed by, or
           associated with any candidate, campaign, political party, government body, or Polymarket. Names and photos are
-          used only to identify the people the coins are about. Buying a coin is not a political contribution.
+          used only to identify the people the coins are about. Buying a coin is not a political contribution. A share of claimed creator fees goes to the dev wallet.
           Memecoins are highly speculative and can go to zero; nothing here is financial advice. Odds are live prices from{" "}
           <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-mark">
             Polymarket

@@ -72,6 +72,10 @@
   from { transform: scaleY(0.25); }
   to { transform: scaleY(0.9); }
 }
+@keyframes wave-out {
+  from { transform: scale(0.6); opacity: 0.9; }
+  to { transform: scale(1.4); opacity: 0; }
+}
 @keyframes crt-on {
   0% { transform: scaleY(0.015) scaleX(0.6); filter: brightness(3); }
   60% { transform: scaleY(1) scaleX(1); filter: brightness(1.6); }

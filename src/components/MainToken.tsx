@@ -127,15 +127,16 @@ export default function MainToken() {
           }
         />
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <StatBlock tone="gold" label="SOL claimed" value={stats && routed > 0 ? fmtSol(routed) : mints.any ? "—" : "Soon"} valueClass="text-[clamp(30px,4vw,44px)]" />
+          <StatBlock tone="gold" label="SOL routed" value={stats && routed > 0 ? fmtSol(routed) : mints.any ? "—" : "Soon"} valueClass="text-[clamp(30px,4vw,44px)]" />
           <StatBlock tone="red" label="To buy & burn" value={stats && routed > 0 ? fmtSol(stats.solToBurn) : "—"} valueClass="text-[clamp(30px,4vw,44px)]" />
-          <StatBlock label="Dev cut (10%)" value={stats && routed > 0 ? fmtSol(stats.solToDev) : "—"} valueClass="text-[clamp(30px,4vw,44px)]" />
-          <StatBlock label="Cycles run" value={stats?.cycles ? fmtNum(stats.cycles) : "—"} valueClass="text-[clamp(30px,4vw,44px)]" />
+          <StatBlock label="To LP" value={stats && routed > 0 ? fmtSol(stats.solToLp) : "—"} valueClass="text-[clamp(30px,4vw,44px)]" />
+          <StatBlock label="To marketing" value={stats && routed > 0 ? fmtSol(stats.solToMarketing) : "—"} valueClass="text-[clamp(30px,4vw,44px)]" />
         </div>
         {stats && routed > 0 && (
-          <div className="mt-5 flex h-4 border-2 border-ink" role="img" aria-label="Where claimed SOL went">
+          <div className="mt-5 flex h-4 border-2 border-ink" role="img" aria-label="Where routed SOL went">
             <span className="bg-red-hot" style={{ width: `${(stats.solToBurn / routed) * 100}%` }} />
-            <span className="bg-mark" style={{ width: `${(stats.solToDev / routed) * 100}%` }} />
+            <span className="bg-mark" style={{ width: `${(stats.solToLp / routed) * 100}%` }} />
+            <span className="bg-sky" style={{ width: `${(stats.solToMarketing / routed) * 100}%` }} />
           </div>
         )}
         <p className="mt-4 font-narrow text-sm font-bold uppercase tracking-[0.16em] text-ink/55">

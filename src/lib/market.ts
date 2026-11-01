@@ -20,7 +20,8 @@ export type EngineStats = {
   totalBurned: number;
   totalSolRouted: number;
   solToBurn: number;
-  solToDev: number;
+  solToLp: number;
+  solToMarketing: number;
   cycles: number;
   lastCycleAt: string | null;
   nextCycleAt: string | null;
@@ -162,7 +163,8 @@ export function normalizeStats(raw: unknown): EngineStats | null {
     totalBurned: num(r.totalBurned),
     totalSolRouted: num(r.totalSolRouted),
     solToBurn: num(r.solToBurn),
-    solToDev: num(r.solToDev),
+    solToLp: num(r.solToLp),
+    solToMarketing: num(r.solToMarketing),
     cycles: num(r.cycles),
     lastCycleAt: isoOrNull(r.lastCycleAt),
     nextCycleAt: isoOrNull(r.nextCycleAt),
@@ -250,7 +252,8 @@ export function demoStats(): EngineStats {
     totalBurned: 48_215_330,
     totalSolRouted: 812.4,
     solToBurn: 731.2,
-    solToDev: 81.2,
+    solToLp: 0,
+    solToMarketing: 0,
     cycles: 214,
     lastCycleAt: new Date(last).toISOString(),
     nextCycleAt: new Date(last + CYCLE_MS).toISOString(),
