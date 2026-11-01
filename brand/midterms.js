@@ -16,11 +16,8 @@ function mark() {
 function pfp() {
   return svg(1024, 1024, `
   <rect width="1024" height="1024" fill="${C.paper}"/>
-  ${timing(262, 96, 500, { size: 28, gap: 28, thick: 14 })}
-  <g transform="translate(142 40) scale(0.72266)">${mark()}</g>
-  ${text(512, 786, 124, "MIDTERMS", { anchor: "middle", spacing: 6 })}
-  ${text(512, 842, 34, "WRITE IT IN · NOV 3, 2026", { font: LABEL, weight: 700, anchor: "middle", spacing: 7 })}
-  ${timing(262, 900, 500, { size: 28, gap: 28, thick: 14 })}`);
+  <g transform="translate(142 63) scale(0.72266)">${mark()}</g>
+  ${text(512, 821, 150, "MIDTERMS", { anchor: "middle", spacing: 6 })}`);
 }
 
 // The logo on its own with a transparent background, for the site's nav.
