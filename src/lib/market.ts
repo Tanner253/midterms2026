@@ -2,7 +2,7 @@ import type { LaunchedCoin } from "./coins";
 
 export const MAIN_KEY = "__main";
 // The crank's cycle, used until its stats say otherwise.
-export const CYCLE_MS = 900_000;
+export const CYCLE_MS = 300_000;
 // Set in .env.development so `npm run dev` shows fake numbers; never set for production.
 export const DEMO = process.env.NEXT_PUBLIC_DEMO === "1";
 

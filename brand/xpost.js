@@ -28,7 +28,7 @@ function xpost(d) {
   <g transform="translate(838 96) scale(0.3)">${mark()}</g>
   ${text(990, 422, 44, "EVERY CANDIDATE", { anchor: "middle", weight: 800 })}
   ${text(990, 468, 44, "COIN FEEDS THE BURN", { anchor: "middle", weight: 800 })}
-  ${text(990, 524, 52, d.every || "EVERY 15 MINUTES", { anchor: "middle", fill: C.swing })}
+  ${text(990, 524, 52, d.every || "EVERY 5 MINUTES", { anchor: "middle", fill: C.swing })}
 
   ${text(62, 572, 24, d.lead, { font: LABEL, weight: 700, spacing: 2 })}
   ${text(60, 620, 42, "MIDTERMS2026.FUN")}`);

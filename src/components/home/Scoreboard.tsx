@@ -126,7 +126,7 @@ function NextBurn() {
         </div>
       )}
       <p className="mt-4 font-narrow text-sm font-bold uppercase tracking-[0.18em] text-ink/70">
-        Creator fees claimed &amp; burned on-chain every 15 minutes
+        Creator fees claimed &amp; burned on-chain every 5 minutes
       </p>
     </>
   );

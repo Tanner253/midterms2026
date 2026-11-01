@@ -23,7 +23,7 @@ Live: https://midterms2026.fun
 | Race odds | Each race's Polymarket event (gamma `/markets/keyset`), every 5 min. Open and closed markets are both read, because keyset leaves closed ones out by default. |
 | Race to 218, Race to 51, chyron | Polymarket's House and Senate control markets, ids in `SITE.control` |
 | Burned total | Read from the chain by `/api/stats` |
-| SOL claimed, dev cut, cycle times, holder counts, burn log | MongoDB, written every 15 minutes by the crank (private repo `midterms2026-crank`), served by this site's read-only `/api/stats` route |
+| SOL claimed, dev cut, cycle times, holder counts, burn log | MongoDB, written every 5 minutes by the crank (private repo `midterms2026-crank`), served by this site's read-only `/api/stats` route |
 | Voter Card | `board-meta.json` + `board-{n}.json`, written by your internal claim process |
 
 Odds are never used to rank coins. Each one is for a different race, so a 98% favourite in a safe seat isn't ahead of a 60% favourite elsewhere. Boards rank by market cap.
@@ -52,7 +52,7 @@ The crank saves this as one document (`_id: "current"`) in the `stats` collectio
   "cycles": 0,
   "lastCycleAt": null,
   "nextCycleAt": null,
-  "cycleIntervalMs": 900000,
+  "cycleIntervalMs": 300000,
   "capturedAt": null,
   "holders": {
     "<mint>": { "count": 1049, "change24h": -30 }

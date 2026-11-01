@@ -58,7 +58,7 @@ export const ENGINE_STEPS = [
   {
     num: "01",
     title: "Claim",
-    body: `Every 15 minutes, creator fees are claimed across all ${N} candidate coins, the party coins and the main $MIDTERMS coin.`,
+    body: `Every 5 minutes, creator fees are claimed across all ${N} candidate coins, the party coins and the main $MIDTERMS coin.`,
   },
   {
     num: "02",
@@ -84,7 +84,7 @@ export const PAIRING = {
   points: [
     {
       title: "Constant buy pressure",
-      body: "After the 10% dev cut, every candidate coin's fees market-buy $MIDTERMS every 15 minutes, no matter who is pumping.",
+      body: "After the 10% dev cut, every candidate coin's fees market-buy $MIDTERMS every 5 minutes, no matter who is pumping.",
     },
     {
       title: "Shrinking supply",
