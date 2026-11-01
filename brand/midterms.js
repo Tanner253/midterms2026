@@ -1,7 +1,7 @@
 // $MIDTERMS logo, X banner, share card and icons: a paper ballot with the oval filled in by hand.
 const fs = require("node:fs");
 const path = require("node:path");
-const { C, HEAD, LABEL, OUT, filledOval, timing, text, contest, render } = require("./render.js");
+const { C, HEAD, LABEL, OUT, filledOval, scribble, text, render } = require("./render.js");
 
 const svg = (w, h, body) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">${body}</svg>`;
 
@@ -23,48 +23,31 @@ function pfp() {
 // The logo on its own with a transparent background, for the site's nav.
 const logo = () => svg(1024, 1024, mark());
 
-// X header, 1500x500. The avatar sits over the bottom-left, so the copy stays clear of it.
+// The two pens across a whole canvas: red into purple into blue, with hand-drawn edges.
+function penField(w, h) {
+  const rx = w * 0.7;
+  const ry = h * 0.86;
+  const cx = w / 2;
+  const cy = h / 2;
+  return `
+  <rect width="${cx}" height="${h}" fill="${C.red}"/>
+  <rect x="${cx}" width="${cx}" height="${h}" fill="${C.blue}"/>
+  ${scribble(cx, cy, rx, ry, { from: 0.42, to: 0.58, color: C.swing, passes: 26, seed: 47 })}`;
+}
+
+// X header, 1500x500. The avatar sits over the bottom-left, so the word stays above it.
 function banner() {
-  const ballot = contest(960, 62, 480, {
-    title: "CONTROL OF CONGRESS",
-    note: "VOTE FOR ONE",
-    rowH: 108,
-    size: 54,
-    rows: [{ label: "REPUBLICANS" }, { label: "DEMOCRATS" }, { label: "$MIDTERMS", write: true }],
-  });
   return svg(1500, 500, `
-  <rect width="1500" height="500" fill="${C.paper}"/>
-  ${timing(30, 14, 1450)}
-  ${timing(30, 474, 1450)}
-  ${text(96, 88, 25, "OFFICIAL BALLOT · GENERAL ELECTION · NOVEMBER 3, 2026", { font: LABEL, weight: 700, spacing: 3 })}
-  <rect x="96" y="102" width="800" height="6" fill="${C.ink}"/>
-  ${text(92, 236, 140, "WHO CONTROLS")}
-  ${text(92, 362, 140, "CONGRESS?", { fill: C.swing })}
-  ${text(400, 426, 29, "MIDTERMS2026.FUN · ON PUMP.FUN", { font: LABEL, weight: 700, spacing: 3 })}
-  ${ballot.svg}`);
+  ${penField(1500, 500)}
+  ${text(750, 338, 250, "MIDTERMS", { anchor: "middle", fill: C.paper, spacing: 6 })}`);
 }
 
 // Share card for X / Telegram, 1200x630.
 function og() {
-  const ballot = contest(640, 134, 500, {
-    title: "CONTROL OF CONGRESS",
-    note: "VOTE FOR ONE",
-    rowH: 124,
-    size: 56,
-    rows: [{ label: "REPUBLICANS" }, { label: "DEMOCRATS" }, { label: "$MIDTERMS", write: true }],
-  });
   return svg(1200, 630, `
-  <rect width="1200" height="630" fill="${C.paper}"/>
-  ${timing(30, 18, 1150)}
-  ${timing(30, 600, 1150)}
-  ${text(60, 88, 27, "OFFICIAL BALLOT · GENERAL ELECTION · NOVEMBER 3, 2026", { font: LABEL, weight: 700, spacing: 4 })}
-  <rect x="60" y="104" width="1080" height="6" fill="${C.ink}"/>
-  <g transform="translate(46 118) scale(0.25)">${mark()}</g>
-  ${text(306, 226, 78, "MIDTERMS")}
-  ${text(306, 284, 54, "2026", { fill: C.swing })}
-  ${text(60, 448, 92, "WHO CONTROLS")}
-  ${text(60, 544, 92, "CONGRESS?", { fill: C.swing })}
-  ${ballot.svg}`);
+  ${penField(1200, 630)}
+  ${text(600, 372, 236, "MIDTERMS", { anchor: "middle", fill: C.paper, spacing: 6 })}
+  ${text(600, 440, 34, "MIDTERMS2026.FUN", { font: LABEL, weight: 700, anchor: "middle", fill: C.paper, spacing: 8 })}`);
 }
 
 // Tiny favicons (16-48px): just the two-colour oval, drawn solid so it holds up.
