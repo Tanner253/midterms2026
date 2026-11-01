@@ -140,9 +140,9 @@ function Illustration({ step, color }: { step: number; color: string }) {
     return (
       <svg viewBox="0 0 200 140" className="w-full max-w-[280px]" aria-hidden="true">
         <circle cx="100" cy="70" r="56" fill="var(--color-paper-3)" stroke="var(--color-ink)" strokeWidth="4" />
-        <path d="M100 70V14a56 56 0 0 1 45 33z" fill={color} stroke="var(--color-ink)" strokeWidth="3" style={{ transformOrigin: "100px 70px", animation: "flame 1.6s ease-in-out infinite" }} />
+        <path d="M100 70V14a56 56 0 0 1 32.9 10.7z" fill={color} stroke="var(--color-ink)" strokeWidth="3" style={{ transformOrigin: "100px 70px", animation: "flame 1.6s ease-in-out infinite" }} />
         <text x="100" y="98" textAnchor="middle" fontFamily="var(--ff-head)" fontWeight="900" fontSize="34" fill="var(--color-ink)">
-          15%
+          10%
         </text>
       </svg>
     );

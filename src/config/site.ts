@@ -63,7 +63,7 @@ export const ENGINE_STEPS = [
   {
     num: "02",
     title: "Dev cut",
-    body: "15% of every claim goes to the dev wallet. It comes off the top, once, and nothing else is taken.",
+    body: "10% of every claim goes to the dev wallet. It comes off the top, once, and nothing else is taken.",
   },
   {
     num: "03",
@@ -84,7 +84,7 @@ export const PAIRING = {
   points: [
     {
       title: "Constant buy pressure",
-      body: "After the 15% dev cut, every candidate coin's fees market-buy $MIDTERMS every 15 minutes, no matter who is pumping.",
+      body: "After the 10% dev cut, every candidate coin's fees market-buy $MIDTERMS every 15 minutes, no matter who is pumping.",
     },
     {
       title: "Shrinking supply",

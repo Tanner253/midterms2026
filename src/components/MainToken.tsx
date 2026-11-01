@@ -129,7 +129,7 @@ export default function MainToken() {
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatBlock tone="gold" label="SOL claimed" value={stats && routed > 0 ? fmtSol(routed) : mints.any ? "—" : "Soon"} valueClass="text-[clamp(30px,4vw,44px)]" />
           <StatBlock tone="red" label="To buy & burn" value={stats && routed > 0 ? fmtSol(stats.solToBurn) : "—"} valueClass="text-[clamp(30px,4vw,44px)]" />
-          <StatBlock label="Dev cut (15%)" value={stats && routed > 0 ? fmtSol(stats.solToDev) : "—"} valueClass="text-[clamp(30px,4vw,44px)]" />
+          <StatBlock label="Dev cut (10%)" value={stats && routed > 0 ? fmtSol(stats.solToDev) : "—"} valueClass="text-[clamp(30px,4vw,44px)]" />
           <StatBlock label="Cycles run" value={stats?.cycles ? fmtNum(stats.cycles) : "—"} valueClass="text-[clamp(30px,4vw,44px)]" />
         </div>
         {stats && routed > 0 && (

@@ -249,8 +249,8 @@ export function demoStats(): EngineStats {
   return {
     totalBurned: 48_215_330,
     totalSolRouted: 812.4,
-    solToBurn: 690.5,
-    solToDev: 121.9,
+    solToBurn: 731.2,
+    solToDev: 81.2,
     cycles: 214,
     lastCycleAt: new Date(last).toISOString(),
     nextCycleAt: new Date(last + CYCLE_MS).toISOString(),
