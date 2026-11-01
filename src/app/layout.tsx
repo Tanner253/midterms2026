@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Alfa_Slab_One, Barlow_Condensed, Inter, JetBrains_Mono } from "next/font/google";
+import { Archivo_Narrow, Big_Shoulders, IBM_Plex_Mono, Permanent_Marker, Public_Sans } from "next/font/google";
 import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import Splash from "@/components/Splash";
@@ -10,10 +10,11 @@ import { share } from "@/lib/og";
 import { ENTERED_SCRIPT } from "@/lib/splash";
 import "./globals.css";
 
-const slab = Alfa_Slab_One({ weight: "400", subsets: ["latin"], variable: "--ff-slab" });
-const narrow = Barlow_Condensed({ weight: ["500", "600", "700"], subsets: ["latin"], variable: "--ff-narrow" });
-const inter = Inter({ subsets: ["latin"], variable: "--ff-inter" });
-const mono = JetBrains_Mono({ weight: ["500", "700"], subsets: ["latin"], variable: "--ff-mono" });
+const head = Big_Shoulders({ weight: ["800", "900"], subsets: ["latin"], variable: "--ff-head" });
+const narrow = Archivo_Narrow({ weight: ["500", "600", "700"], subsets: ["latin"], variable: "--ff-narrow" });
+const body = Public_Sans({ subsets: ["latin"], variable: "--ff-body" });
+const mono = IBM_Plex_Mono({ weight: ["500", "700"], subsets: ["latin"], variable: "--ff-mono" });
+const hand = Permanent_Marker({ weight: "400", subsets: ["latin"], variable: "--ff-hand" });
 
 const description = `The 2026 midterms on-chain. One memecoin per candidate in the 12 biggest races, all feeding $${SITE.ticker}. Exclusively on pump.fun.`;
 
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   ...share(`${SITE.name} | $${SITE.ticker}`, description),
 };
 
-export const viewport: Viewport = { themeColor: "#060f27", colorScheme: "dark" };
+export const viewport: Viewport = { themeColor: "#f2f4ee", colorScheme: "light" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -32,10 +33,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script dangerouslySetInnerHTML={{ __html: ENTERED_SCRIPT }} />
       </head>
-      <body className={`${slab.variable} ${narrow.variable} ${inter.variable} ${mono.variable} font-sans antialiased`}>
+      <body className={`${head.variable} ${narrow.variable} ${body.variable} ${mono.variable} ${hand.variable} font-sans antialiased`}>
         <MarketProvider>
           {DEMO && (
-            <div className="bg-gold px-4 py-1.5 text-center font-narrow text-sm font-bold uppercase tracking-[0.16em] text-ink">
+            <div className="bg-mark px-4 py-1.5 text-center font-narrow text-sm font-bold uppercase tracking-[0.16em] text-paper">
               Preview mode · demo numbers, not real market data
             </div>
           )}

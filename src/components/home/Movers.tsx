@@ -19,8 +19,8 @@ function pickMovers(rows: CandidateRow[]): { kicker: string; title: string; pick
       kicker: "Last 24 hours",
       title: "Top gainer & top loser",
       picks: [
-        { r: s[0], label: "▲ Top gainer", tone: "bg-lime text-ink" },
-        { r: s.at(-1)!, label: "▼ Top loser", tone: "bg-red-hot text-cream" },
+        { r: s[0], label: "▲ Top gainer", tone: "bg-lime text-paper" },
+        { r: s.at(-1)!, label: "▼ Top loser", tone: "bg-red-hot text-paper" },
       ],
     };
   }
@@ -32,8 +32,8 @@ function pickMovers(rows: CandidateRow[]): { kicker: string; title: string; pick
         kicker: "Polymarket · last 7 days",
         title: "Biggest odds movers",
         picks: [
-          { r: s[0], label: "▲ Odds riser", tone: "bg-lime text-ink" },
-          { r: s.at(-1)!, label: "▼ Odds faller", tone: "bg-red-hot text-cream" },
+          { r: s[0], label: "▲ Odds riser", tone: "bg-lime text-paper" },
+          { r: s.at(-1)!, label: "▼ Odds faller", tone: "bg-red-hot text-paper" },
         ],
       };
   }
@@ -42,8 +42,8 @@ function pickMovers(rows: CandidateRow[]): { kicker: string; title: string; pick
     kicker: "Polymarket",
     title: "The biggest race",
     picks: [
-      { r: rows[0], label: `★ ${raceById(rows[0].race).short}`, tone: "bg-gold text-ink" },
-      { r: rows[1], label: `★ ${raceById(rows[1].race).short} rival`, tone: "bg-cream text-ink" },
+      { r: rows[0], label: `★ ${raceById(rows[0].race).short}`, tone: "bg-ink text-paper" },
+      { r: rows[1], label: `★ ${raceById(rows[1].race).short} rival`, tone: "bg-ink text-paper" },
     ],
   };
 }
@@ -57,7 +57,7 @@ export default function Movers() {
           kicker={kicker}
           title={title}
           aside={
-            <Link href="/candidates/" className="font-narrow font-bold uppercase tracking-[0.16em] text-gold hover:text-cream">
+            <Link href="/candidates/" className="font-narrow font-bold uppercase tracking-[0.16em] text-mark hover:text-ink">
               See all →
             </Link>
           }
@@ -68,7 +68,7 @@ export default function Movers() {
               key={label}
               r={r}
               fallback="board"
-              banner={<div className={`border-b-[3px] border-cream px-4 py-2 font-narrow text-sm font-bold uppercase tracking-[0.24em] ${tone}`}>{label}</div>}
+              banner={<div className={`border-b-2 border-ink px-4 py-2 font-narrow text-sm font-bold uppercase tracking-[0.24em] ${tone}`}>{label}</div>}
             />
           ))}
         </div>

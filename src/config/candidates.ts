@@ -22,9 +22,9 @@ export type Candidate = {
 
 // color = party fill; on = readable text color on that fill; adj = "Democratic nominee".
 export const PARTIES: Record<Party, { name: string; plural: string; adj: string; short: string; color: string; on: string }> = {
-  R: { name: "Republican", plural: "Republicans", adj: "Republican", short: "GOP", color: "var(--color-red)", on: "var(--color-cream)" },
-  D: { name: "Democrat", plural: "Democrats", adj: "Democratic", short: "DEM", color: "var(--color-blue)", on: "var(--color-cream)" },
-  I: { name: "Independent", plural: "Independents", adj: "Independent", short: "IND", color: "var(--color-gold)", on: "var(--color-ink)" },
+  R: { name: "Republican", plural: "Republicans", adj: "Republican", short: "GOP", color: "var(--color-red)", on: "var(--color-paper)" },
+  D: { name: "Democrat", plural: "Democrats", adj: "Democratic", short: "DEM", color: "var(--color-blue)", on: "var(--color-paper)" },
+  I: { name: "Independent", plural: "Independents", adj: "Independent", short: "IND", color: "var(--color-mark)", on: "var(--color-paper)" },
 };
 
 // Roster: both candidates in the 12 statewide races with the most Polymarket volume (Oct 31, 2026),

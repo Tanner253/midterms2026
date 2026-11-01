@@ -6,18 +6,18 @@ import { Wrap } from "./ui";
 export default function Footer() {
   const socials = SITE.socials.filter((s) => s.href);
   return (
-    <footer className="border-t-4 border-gold bg-ink">
-      <Wrap className="space-y-5 pb-[calc(env(safe-area-inset-bottom)+2rem)] pt-8 text-sm text-cream/60">
+    <footer className="border-t-[6px] border-ink bg-paper">
+      <Wrap className="space-y-5 pb-[calc(env(safe-area-inset-bottom)+2rem)] pt-8 text-sm text-ink/60">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="font-slab text-xl text-cream">
-            ${SITE.ticker} <span className="text-gold">·</span> {SITE.name.toUpperCase()}
+          <div className="font-head text-3xl text-ink">
+            ${SITE.ticker} <span className="text-mark">·</span> {SITE.name.toUpperCase()}
           </div>
           {socials.length > 0 && (
-            <div className="flex gap-4 text-2xl text-cream">
+            <div className="flex gap-4 text-2xl text-ink">
               {socials.map((s) => {
                 const Icon = SOCIAL_ICONS[s.label];
                 return (
-                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="hover:text-gold">
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="hover:text-mark">
                     {Icon ? <Icon /> : s.label}
                   </a>
                 );
@@ -30,12 +30,12 @@ export default function Footer() {
           associated with any candidate, campaign, political party, government body, or Polymarket. Names and photos are
           used only to identify the people the coins are about. Buying a coin is not a political contribution.
           Memecoins are highly speculative and can go to zero; nothing here is financial advice. Odds are live prices from{" "}
-          <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-gold">
+          <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-mark">
             Polymarket
           </a>
           , not predictions by this site.
         </p>
-        <Link href="/credits/" className="inline-block font-narrow font-bold uppercase tracking-[0.16em] text-cream/80 hover:text-gold">
+        <Link href="/credits/" className="inline-block font-narrow font-bold uppercase tracking-[0.16em] text-ink/80 hover:text-mark">
           Photo credits →
         </Link>
       </Wrap>

@@ -38,30 +38,30 @@ export default function RaceView() {
 
   return (
     <>
-      <PageHero variant="red" kicker="Road to the 120th Congress" title="The Race" subtitle={`${RACES.length} races on the board, ${called} called. One seat each.`}>
+      <PageHero kicker="Road to the 120th Congress" title="The Race" subtitle={`${RACES.length} races on the board, ${called} called. One seat each.`}>
         <div className="mt-6 flex flex-wrap gap-2">
           {chips.map(([k, v]) => (
-            <span key={k} className="border-[3px] border-ink bg-ink px-3 py-1.5 font-narrow text-sm font-bold uppercase tracking-[0.14em]">
-              <span className="text-cream/60">{k}</span> <span className="text-gold">{v}</span>
+            <span key={k} className="border-2 border-ink bg-paper px-3 py-1.5 font-narrow text-sm font-bold uppercase tracking-[0.14em]">
+              <span className="text-ink/60">{k}</span> <span className="text-mark">{v}</span>
             </span>
           ))}
         </div>
       </PageHero>
 
       <Wrap className="pt-8">
-        <ol className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-3 [mask-image:linear-gradient(90deg,#000_85%,transparent)] sm:mx-0 sm:px-0 lg:[mask-image:none]">
+        <ol className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-3 sm:mx-0 sm:px-0 ">
           {STAGES.map((s, i) => {
             const state = i < current ? "done" : i === current ? "now" : "next";
             return (
               <li
                 key={s.id}
                 aria-current={state === "now" ? "step" : undefined}
-                className={`min-w-[140px] flex-1 border-[3px] p-3 ${
+                className={`min-w-[150px] flex-1 border-2 p-3 ${
                   state === "now"
-                    ? "border-ink bg-gold text-ink shadow-brutal-red"
+                    ? "border-ink bg-ink text-paper"
                     : state === "done"
-                      ? "border-cream/10 bg-ink text-cream/50"
-                      : "border-cream/20 bg-ink-2"
+                      ? "border-ink/20 bg-paper text-ink/50"
+                      : "border-ink bg-paper"
                 }`}
               >
                 <div className="font-narrow text-[11px] font-bold uppercase tracking-[0.18em] opacity-80">
@@ -69,7 +69,7 @@ export default function RaceView() {
                   {state === "now" && " · ● Now"}
                   {state === "done" && " · ✓"}
                 </div>
-                <div className="mt-1 font-slab text-lg uppercase leading-tight">{s.label}</div>
+                <div className="mt-1 font-head text-3xl uppercase leading-none">{s.label}</div>
                 {state === "now" && <div className="mt-1 text-sm">{s.blurb}</div>}
               </li>
             );

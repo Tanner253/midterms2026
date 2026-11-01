@@ -13,7 +13,7 @@ const OFFICES: { office: Office; title: string }[] = [
   { office: "Governor", title: "Governor" },
 ];
 
-const partyColor = (r: CandidateRow) => (r.party === "I" ? "var(--color-gold)" : r.party === "R" ? "var(--color-red-hot)" : "var(--color-sky)");
+const partyColor = (r: CandidateRow) => (r.party === "I" ? "var(--color-mark)" : r.party === "R" ? "var(--color-red-hot)" : "var(--color-sky)");
 
 // One side of a race: the candidate's button, name, coin and that race's odds.
 function Side({ r, right = false }: { r: CandidateRow; right?: boolean }) {
@@ -22,14 +22,14 @@ function Side({ r, right = false }: { r: CandidateRow; right?: boolean }) {
   return (
     <Link
       href={`/candidates/#${r.id}`}
-      className={`flex min-w-0 flex-1 flex-col gap-2 p-3 transition hover:bg-cream/[0.06] ${right ? "items-end text-right" : "items-start"} ${won ? "bg-gold text-ink hover:bg-gold" : ""} ${lost ? "opacity-45" : ""}`}
+      className={`flex min-w-0 flex-1 flex-col gap-2 p-3 transition hover:bg-paper-3 ${right ? "items-end text-right" : "items-start"} ${won ? "bg-mark text-paper hover:bg-mark" : ""} ${lost ? "opacity-45" : ""}`}
     >
       <Avatar c={r} size={56} dim={false} />
       <span className={`block w-full font-bold uppercase leading-tight ${lost ? "line-through" : ""}`}>{r.name}</span>
       <span className="block w-full font-narrow text-xs font-bold uppercase tracking-[0.14em]" style={won ? undefined : { color: partyColor(r) }}>
         {PARTIES[r.party].short} · ${r.ticker}
       </span>
-      <span className="font-slab text-2xl tabular-nums leading-none">{won ? "★ Won" : fmtOdds(r.odds)}</span>
+      <span className="font-head text-4xl tabular-nums leading-none">{won ? "★ Won" : fmtOdds(r.odds)}</span>
     </Link>
   );
 }
@@ -43,25 +43,25 @@ function RaceCard({ race, rows }: { race: Race; rows: CandidateRow[] }) {
   const total = known ? left.odds! + right.odds! : 0;
   const share = total > 0 ? (left.odds! / total) * 100 : 0;
   return (
-    <li className={`flex flex-col border-[3px] bg-ink-2 ${winner ? "border-gold shadow-brutal-gold" : "border-cream shadow-brutal-md"}`}>
-      <div className="flex items-center justify-between gap-3 border-b-[3px] border-cream/20 px-3 py-2">
-        <h4 className="truncate font-slab text-base uppercase">{race.label}</h4>
+    <li className={`flex flex-col border-2 bg-paper ${winner ? "border-mark" : "border-ink"}`}>
+      <div className="flex items-center justify-between gap-3 bg-ink px-3 py-2 text-paper">
+        <h4 className="truncate font-head text-2xl uppercase leading-none">{race.label}</h4>
         {winner ? (
-          <span className="shrink-0 bg-gold px-1.5 py-0.5 font-narrow text-[11px] font-bold uppercase tracking-[0.14em] text-ink">Called</span>
+          <span className="shrink-0 bg-paper px-1.5 py-0.5 font-narrow text-[11px] font-bold uppercase tracking-[0.14em] text-ink">Called</span>
         ) : (
-          <a href={raceUrl(race.id)} target="_blank" rel="noopener noreferrer" className="shrink-0 font-narrow text-xs font-bold uppercase tracking-[0.14em] text-gold hover:text-cream">
+          <a href={raceUrl(race.id)} target="_blank" rel="noopener noreferrer" className="shrink-0 font-narrow text-xs font-bold uppercase tracking-[0.14em] text-paper/80 hover:text-paper">
             Odds ↗
           </a>
         )}
       </div>
       <div className="relative flex flex-1">
         <Side r={left} />
-        <span aria-hidden="true" className="absolute left-1/2 top-7 -translate-x-1/2 font-slab text-lg text-gold">
+        <span aria-hidden="true" className="absolute left-1/2 top-7 -translate-x-1/2 font-head text-2xl text-ink/40">
           VS
         </span>
         <Side r={right} right />
       </div>
-      <div className="relative h-3 border-t-[3px] border-ink" style={{ background: PARTIES[right.party].color }} role="img" aria-label={known ? `${left.name} ${fmtOdds(left.odds)}, ${right.name} ${fmtOdds(right.odds)}` : "Odds loading"}>
+      <div className="relative h-3 border-t-2 border-ink" style={{ background: PARTIES[right.party].color }} role="img" aria-label={known ? `${left.name} ${fmtOdds(left.odds)}, ${right.name} ${fmtOdds(right.odds)}` : "Odds loading"}>
         <div className="absolute inset-y-0 left-0 transition-[width] duration-700" style={{ width: `${share}%`, background: PARTIES[left.party].color }} />
       </div>
     </li>
@@ -77,8 +77,7 @@ export default function Road() {
         const races = racesFor(office);
         return (
           <section key={office}>
-            <h3 className="mb-4 flex items-center gap-2 font-narrow text-sm font-bold uppercase tracking-[0.28em] text-gold">
-              <span aria-hidden="true" className="h-1 w-3 bg-gold" />
+            <h3 className="mb-4 font-head text-3xl uppercase leading-none">
               {title} · {races.length} {races.length === 1 ? "race" : "races"}
             </h3>
             <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -89,7 +88,7 @@ export default function Road() {
           </section>
         );
       })}
-      <p className="font-narrow text-sm font-bold uppercase tracking-[0.16em] text-cream/55">Odds are each race&apos;s own, live from Polymarket.</p>
+      <p className="font-narrow text-sm font-bold uppercase tracking-[0.16em] text-ink/55">Odds are each race&apos;s own, live from Polymarket.</p>
     </div>
   );
 }

@@ -29,32 +29,32 @@ export default function PartiesSection() {
               <div className="flex items-center gap-3 p-4">
                 {img && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={img} alt="" referrerPolicy="no-referrer" className="h-14 w-14 shrink-0 border-[3px] border-ink object-cover" />
+                  <img src={img} alt="" referrerPolicy="no-referrer" className="h-14 w-14 shrink-0 border-2 border-ink object-cover" />
                 )}
                 <div className="min-w-0">
-                  <div className="font-slab text-xl uppercase leading-[0.95] [text-shadow:0_2px_0_rgba(0,0,0,0.45)] sm:text-2xl">{c.name}</div>
-                  <span className="mt-2 inline-block border-2 border-gold bg-ink px-1.5 py-0.5 font-narrow text-[11px] font-bold uppercase tracking-[0.14em] text-gold">
+                  <div className="font-head text-3xl uppercase leading-[0.92]">{c.name}</div>
+                  <span className="mt-2 inline-block border-2 border-ink bg-paper px-1.5 py-0.5 font-narrow text-[11px] font-bold uppercase tracking-[0.14em] text-mark">
                     ${c.ticker}
                   </span>
                 </div>
               </div>
-              <div className="grid grid-cols-3 border-t-4 border-ink bg-ink text-cream">
+              <div className="grid grid-cols-3 border-t-2 border-ink bg-paper text-ink">
                 <div className="px-3 py-2">
-                  <Label className="text-cream/60">Mkt cap</Label>
+                  <Label className="text-ink/60">Mkt cap</Label>
                   <div className="font-mono text-sm tabular-nums">{m ? fmtUsdShort(m.marketCap) : empty}</div>
                 </div>
                 <div className="px-3 py-2">
-                  <Label className="text-cream/60">24h</Label>
+                  <Label className="text-ink/60">24h</Label>
                   <div className={`font-mono text-sm tabular-nums ${m ? changeColor(m.change24h) : ""}`}>{m ? fmtDir(m.change24h) : empty}</div>
                 </div>
                 <div className="px-3 py-2">
-                  <Label className="text-cream/60">{h ? "Holders" : "Price"}</Label>
+                  <Label className="text-ink/60">{h ? "Holders" : "Price"}</Label>
                   <div className="font-mono text-sm tabular-nums">{h ? fmtCompact(h.count) : m ? fmtUsd(m.priceUsd) : empty}</div>
                 </div>
               </div>
             </>
           );
-          const cls = "block border-4 border-ink shadow-brutal-md";
+          const cls = "block border-2 border-ink";
           const style = { background: p.color, color: p.on };
           return mint ? (
             <a

@@ -51,8 +51,8 @@ export default function BadgeIcon({ k, lit, size = 28 }: { k: BadgeKey; lit: boo
       aria-hidden="true"
       className={lit ? "" : "opacity-25 grayscale"}
     >
-      <path d="M2 1h20v19l-10 7L2 20z" fill="var(--color-navy)" stroke="var(--color-cream)" strokeWidth="1.5" />
-      <g fill="none" stroke={lit ? "var(--color-gold)" : "var(--color-cream)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 1h20v19l-10 7L2 20z" fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="1.5" />
+      <g fill="none" stroke={lit ? "var(--color-mark)" : "var(--color-ink)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         {GLYPHS[k]}
       </g>
     </svg>

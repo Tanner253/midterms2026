@@ -1,33 +1,24 @@
 @import "tailwindcss";
 
 /*
-  Design language (WC-style "campaign poster"): square corners, thick borders,
-  hard offset shadows (shadow-brutal-*), slab display numbers, narrow uppercase labels.
-  Colors: lime = price up, red-hot = price down / live, gold = brand accent & active states.
+  Design language: a paper ballot. Ballot stock, black ink, 2px rules, black contest headers, no
+  shadows. Timing marks (the black ticks a ballot scanner reads) run down the edges of the page.
+  Ovals are the choice marker everywhere. Colors: red and blue are the parties, mark is the purple
+  you get where those two pens cross, lime = price up, red-hot = price down / live.
 */
 @theme {
-  --color-ink: #060f27;
-  --color-ink-2: #0a1636;
-  --color-ink-3: #0f1f4a;
-  --color-navy: #0b1b42;
-  --color-navy-2: #13285e;
-  --color-red: #d62839;
-  --color-red-hot: #ff4357;
-  --color-red-deep: #8f1d2a;
-  --color-blue: #3d6fd9;
-  --color-sky: #8fb2ff;
-  --color-cream: #f7f0e1;
-  --color-cream-deep: #e5d6b0;
-  --color-gold: #e9b949;
-  --color-lime: #8ee86b;
-
-  --shadow-brutal-sm: 3px 3px 0 0 var(--color-ink);
-  --shadow-brutal-md: 6px 6px 0 0 var(--color-ink);
-  --shadow-brutal-lg: 9px 9px 0 0 var(--color-ink);
-  --shadow-brutal-xl: 14px 14px 0 0 var(--color-ink);
-  --shadow-brutal-gold: 6px 6px 0 0 var(--color-gold);
-  --shadow-brutal-red: 6px 6px 0 0 var(--color-red);
-  --shadow-brutal-cream: 6px 6px 0 0 var(--color-cream);
+  --color-paper: #f2f4ee;
+  --color-paper-2: #e9ede3;
+  --color-paper-3: #dde3d4;
+  --color-stock: #e3e8dc;
+  --color-stock-2: #c9d1c0;
+  --color-ink: #12151a;
+  --color-red: #d8232a;
+  --color-red-hot: #c81e24;
+  --color-blue: #1d4ed8;
+  --color-sky: #1d4ed8;
+  --color-mark: #6b2fbf;
+  --color-lime: #0e7c3a;
 
   --animate-pulse-dot: pulse-dot 1.4s ease-in-out infinite;
   --animate-blink: blink 1.2s steps(1) infinite;
@@ -36,10 +27,11 @@
 }
 
 @theme inline {
-  --font-slab: var(--ff-slab), Georgia, serif;
+  --font-head: var(--ff-head), Impact, "Arial Narrow", sans-serif;
   --font-narrow: var(--ff-narrow), "Arial Narrow", sans-serif;
-  --font-sans: var(--ff-inter), system-ui, sans-serif;
+  --font-sans: var(--ff-body), system-ui, sans-serif;
   --font-mono: var(--ff-mono), ui-monospace, monospace;
+  --font-hand: var(--ff-hand), "Segoe Print", cursive;
 }
 
 @keyframes pulse-dot {
@@ -80,10 +72,6 @@
   from { transform: scaleY(0.25); }
   to { transform: scaleY(0.9); }
 }
-@keyframes wave-out {
-  from { transform: scale(0.6); opacity: 0.9; }
-  to { transform: scale(1.4); opacity: 0; }
-}
 @keyframes crt-on {
   0% { transform: scaleY(0.015) scaleX(0.6); filter: brightness(3); }
   60% { transform: scaleY(1) scaleX(1); filter: brightness(1.6); }
@@ -106,73 +94,74 @@
 }
 
 html {
-  background: var(--color-ink);
-  color-scheme: dark;
+  background: var(--color-paper);
+  color-scheme: light;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background-color: var(--color-ink);
-  background-image:
-    radial-gradient(circle at 20% -10%, rgb(61 111 217 / 0.22), transparent 45%),
-    radial-gradient(circle at 110% 30%, rgb(214 40 57 / 0.16), transparent 40%);
-  background-attachment: fixed;
-  color: var(--color-cream);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
 }
 
 @media (max-width: 767px) {
   html, body { overflow-x: clip; }
 }
 
-/* Film grain over everything, like a printed poster. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  pointer-events: none;
-  opacity: 0.07;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* The display face only comes in heavy cuts. */
+.font-head {
+  font-weight: 900;
+  letter-spacing: 0.005em;
+}
+
+/* Timing marks down both edges of the sheet, on screens wide enough to spare the room. */
+@media (min-width: 1100px) {
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 20;
+    width: 10px;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(to bottom, var(--color-ink) 0 22px, transparent 22px 44px);
+  }
+  body::before { left: 8px; }
+  body::after { right: 8px; }
 }
 
 ::selection {
-  background: var(--color-gold);
-  color: var(--color-ink);
+  background: var(--color-mark);
+  color: var(--color-paper);
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-gold);
+  outline: 3px solid var(--color-mark);
   outline-offset: 2px;
 }
 
-/* Faint star field used behind hero panels. */
-.stars {
-  background-image:
-    radial-gradient(rgb(247 240 225 / 0.18) 1px, transparent 1.5px),
-    radial-gradient(rgb(247 240 225 / 0.1) 1px, transparent 1.5px);
-  background-size: 34px 34px, 34px 34px;
-  background-position: 0 0, 17px 17px;
+/* A row of timing marks. */
+.timing {
+  height: 10px;
+  background-image: repeating-linear-gradient(to right, var(--color-ink) 0 22px, transparent 22px 44px);
 }
 
-.stripes {
-  background-image: repeating-linear-gradient(-45deg, var(--color-red) 0 14px, var(--color-cream) 14px 28px);
+/* Alternating bands, like the fan-fold paper election returns are printed on. */
+.greenbar {
+  background-image: repeating-linear-gradient(to bottom, rgb(14 124 58 / 0.07) 0 22px, transparent 22px 44px);
 }
 
-/* CRT scanlines for the burn cam and scoreboard. */
+/* CRT scanlines for the burn cam. */
 .scanlines {
   background-image: repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.05) 0 1px, transparent 1px 3px);
 }
 
-.poster-shadow {
-  text-shadow: 4px 4px 0 var(--color-red), 8px 8px 0 rgb(0 0 0 / 0.35);
-}
-
-/* Loading placeholder: a gold bar sweeping across a dark block. */
+/* Loading placeholder: a purple bar sweeping across a stock block. */
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: var(--color-ink-3);
+  background: var(--color-paper-3);
   color: transparent !important;
 }
 .skeleton::after {
@@ -180,7 +169,7 @@ body::after {
   position: absolute;
   inset: 0;
   width: 40%;
-  background: linear-gradient(90deg, transparent, rgb(233 185 73 / 0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgb(107 47 191 / 0.15), transparent);
   animation: scan-sweep 0.9s linear infinite;
 }
 

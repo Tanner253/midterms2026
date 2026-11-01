@@ -1,18 +1,46 @@
-// Small shared building blocks for the poster look. Use these instead of one-off styles.
+import { SITE } from "@/config/site";
+
+// Small shared building blocks for the ballot look. Use these instead of one-off styles.
 
 // Page-width container used by every section.
 export function Wrap({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 ${className}`}>{children}</div>;
 }
 
-// Dog-ear triangle in a card's top-right corner. Parent must be `relative`.
-export function Notch({ color = "var(--color-ink)", size = 16 }: { color?: string; size?: number }) {
+// The ballot oval. Filled means marked: the red and blue pens crossing to purple.
+export function Oval({ filled = false, size = 18, className = "" }: { filled?: boolean; size?: number; className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute right-0 top-0"
-      style={{ borderLeft: `${size}px solid transparent`, borderTop: `${size}px solid ${color}` }}
+      className={`inline-block shrink-0 rounded-[50%] border-2 border-ink ${className}`}
+      style={{
+        width: size * 1.55,
+        height: size,
+        background: filled ? "linear-gradient(100deg, var(--color-red) 0 40%, var(--color-mark) 40% 60%, var(--color-blue) 60%)" : "var(--color-paper)",
+      }}
     />
+  );
+}
+
+// The black band across the top of the sheet.
+export function BallotBar() {
+  return (
+    <div className="bg-ink text-paper">
+      <Wrap className="flex items-center justify-between gap-4 py-1.5 font-narrow text-xs font-bold uppercase tracking-[0.2em]">
+        <span className="truncate">Official ballot · {SITE.name}</span>
+        <span className="hidden shrink-0 sm:block">General election · Nov 3, 2026</span>
+      </Wrap>
+    </div>
+  );
+}
+
+// Black contest header, the way a ballot titles each race. `note` is the "vote for one" line.
+export function ContestHead({ title, note, className = "" }: { title: React.ReactNode; note?: React.ReactNode; className?: string }) {
+  return (
+    <div className={`flex items-baseline justify-between gap-3 bg-ink px-3 py-2 text-paper ${className}`}>
+      <span className="min-w-0 truncate font-head text-xl uppercase leading-none">{title}</span>
+      {note && <span className="shrink-0 font-narrow text-[11px] font-bold uppercase tracking-[0.16em] text-paper/75">{note}</span>}
+    </div>
   );
 }
 
@@ -23,15 +51,15 @@ export function LiveDot({ color = "var(--color-red-hot)" }: { color?: string }) 
 
 // Narrow uppercase label used above numbers.
 export function Label({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`font-narrow text-[11px] font-bold uppercase tracking-[0.28em] ${className}`}>{children}</div>;
+  return <div className={`font-narrow text-[11px] font-bold uppercase tracking-[0.24em] ${className}`}>{children}</div>;
 }
 
-// Poster stat block: thick border, hard shadow, notch. tone picks the fill.
+// A contest box holding one number. tone picks the colour of the number.
 const TONES = {
-  red: { box: "bg-red text-cream", notch: "var(--color-cream)" },
-  gold: { box: "bg-gold text-ink", notch: "var(--color-ink)" },
-  cream: { box: "bg-cream text-ink", notch: "var(--color-red)" },
-  ink: { box: "bg-ink-2 text-cream", notch: "var(--color-gold)" },
+  red: "text-red",
+  gold: "text-mark",
+  cream: "text-ink",
+  ink: "text-ink",
 } as const;
 
 export function StatBlock({
@@ -40,7 +68,7 @@ export function StatBlock({
   sub,
   tone = "ink",
   className = "",
-  valueClass = "text-[clamp(28px,4vw,44px)]",
+  valueClass = "text-[clamp(40px,5.4vw,64px)]",
 }: {
   label: React.ReactNode;
   value: React.ReactNode;
@@ -49,13 +77,15 @@ export function StatBlock({
   className?: string;
   valueClass?: string;
 }) {
-  const t = TONES[tone];
   return (
-    <div className={`relative border-[4px] border-ink p-4 shadow-brutal-md ${t.box} ${className}`}>
-      <Notch color={t.notch} />
-      <Label className="opacity-85">{label}</Label>
-      <div className={`mt-1 font-slab leading-tight tabular-nums ${valueClass}`}>{value}</div>
-      {sub && <div className="mt-1 font-narrow text-sm font-bold uppercase tracking-[0.12em]">{sub}</div>}
+    <div className={`flex flex-col border-2 border-ink bg-paper ${className}`}>
+      <div className="bg-ink px-3 py-1.5 text-paper">
+        <Label>{label}</Label>
+      </div>
+      <div className="flex flex-1 flex-col justify-center px-3 py-2.5">
+        <div className={`font-head leading-none tabular-nums ${TONES[tone]} ${valueClass}`}>{value}</div>
+        {sub && <div className="mt-1.5 font-narrow text-sm font-bold uppercase tracking-[0.12em] text-ink/70">{sub}</div>}
+      </div>
     </div>
   );
 }
@@ -73,15 +103,15 @@ export function Segmented<T extends string>({
   label: string;
 }) {
   return (
-    <div role="group" aria-label={label} className="inline-flex border-2 border-cream">
+    <div role="group" aria-label={label} className="inline-flex border-2 border-ink">
       {options.map((o) => (
         <button
           key={o.v}
           type="button"
           onClick={() => onChange(o.v)}
           aria-pressed={value === o.v}
-          className={`px-4 py-2 font-narrow text-xs font-bold uppercase tracking-[0.22em] transition sm:px-6 ${
-            value === o.v ? "bg-gold text-ink" : "text-cream/75 hover:bg-cream hover:text-ink"
+          className={`px-4 py-2 font-narrow text-xs font-bold uppercase tracking-[0.2em] transition sm:px-6 ${
+            value === o.v ? "bg-ink text-paper" : "text-ink/75 hover:bg-paper-3"
           }`}
         >
           {o.l}

@@ -48,19 +48,18 @@ export default function Calendar() {
             { v: "all", l: "All" },
           ]}
         />
-        <span className="font-narrow text-xs font-bold uppercase tracking-[0.18em] text-cream/55">Dates are added as they're announced</span>
+        <span className="font-narrow text-xs font-bold uppercase tracking-[0.18em] text-ink/55">Dates are added as they're announced</span>
       </div>
 
       {now !== null && list.length === 0 ? (
-        <div className="border-[3px] border-dashed border-cream/25 px-4 py-10 text-center font-slab text-xl uppercase text-cream/60">
+        <div className="border-[3px] border-dashed border-ink/25 px-4 py-10 text-center font-head text-xl uppercase text-ink/60">
           Nothing decided yet
         </div>
       ) : (
         <div className="space-y-8">
           {groups.map((g) => (
             <section key={g.label}>
-              <h3 className="mb-3 flex items-center gap-2 font-narrow text-sm font-bold uppercase tracking-[0.28em] text-gold">
-                <span aria-hidden="true" className="h-1 w-3 bg-gold" />
+              <h3 className="mb-3 font-head text-3xl uppercase leading-none">
                 {g.label}
               </h3>
               <ul className="grid gap-3 md:grid-cols-2">
@@ -80,31 +79,31 @@ function EventCard({ e, past, today }: { e: RaceEvent; past: boolean; today: boo
   const d = e.date ? new Date(`${e.date}T12:00:00Z`) : null;
   return (
     <li
-      className={`flex border-[3px] ${today ? "border-red-hot shadow-brutal-red" : "border-cream/80 shadow-brutal-md"} ${past ? "bg-ink opacity-75" : "bg-ink-2"}`}
+      className={`flex border-2 ${today ? "border-red-hot" : "border-ink"} ${past ? "bg-paper opacity-75" : "bg-paper"}`}
     >
-      <div className={`flex w-20 shrink-0 flex-col items-center justify-center border-r-[3px] border-cream/30 py-3 ${past ? "bg-ink-3" : "bg-gold text-ink"}`}>
+      <div className={`flex w-20 shrink-0 flex-col items-center justify-center py-3 ${past ? "bg-paper-3" : "bg-ink text-paper"}`}>
         {d ? (
           <>
             <span className="font-narrow text-xs font-bold uppercase tracking-[0.2em]">{d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })}</span>
-            <span className="font-slab text-3xl leading-none">{d.getUTCDate()}</span>
+            <span className="font-head text-5xl leading-none">{d.getUTCDate()}</span>
             <span className="font-narrow text-[11px] font-bold">{d.getUTCFullYear()}</span>
           </>
         ) : (
           <>
-            <span className="font-slab text-xl leading-none">TBD</span>
+            <span className="font-head text-xl leading-none">TBD</span>
             <span className="mt-1 px-1 text-center font-narrow text-[10px] font-bold uppercase leading-tight tracking-[0.1em]">{e.when}</span>
           </>
         )}
       </div>
       <div className="min-w-0 flex-1 p-3">
         <div className="flex flex-wrap items-center gap-2">
-          {today && <span className="bg-red-hot px-1.5 py-0.5 font-narrow text-[11px] font-bold uppercase tracking-[0.16em] text-cream">● Today</span>}
+          {today && <span className="bg-red-hot px-1.5 py-0.5 font-narrow text-[11px] font-bold uppercase tracking-[0.16em] text-paper">● Today</span>}
           {e.party && <PartyTag party={e.party} />}
-          <span className="font-narrow text-[11px] font-bold uppercase tracking-[0.16em] text-cream/55">{stageLabel(e.stage)}</span>
+          <span className="font-narrow text-[11px] font-bold uppercase tracking-[0.16em] text-ink/55">{stageLabel(e.stage)}</span>
         </div>
-        <div className="mt-1 font-slab text-lg uppercase leading-tight">{e.title}</div>
-        <div className="mt-0.5 text-sm text-cream/65">{e.place}</div>
-        {e.result && <div className="mt-1 font-narrow text-sm font-bold uppercase tracking-[0.14em] text-gold">{e.result}</div>}
+        <div className="mt-1 font-head text-3xl uppercase leading-none">{e.title}</div>
+        <div className="mt-0.5 text-sm text-ink/65">{e.place}</div>
+        {e.result && <div className="mt-1 font-narrow text-sm font-bold uppercase tracking-[0.14em] text-mark">{e.result}</div>}
       </div>
     </li>
   );

@@ -41,7 +41,7 @@ export default function FrontrunnerRace() {
       <button
         type="button"
         onClick={() => setSort((s) => ({ col, desc: s.col === col ? !s.desc : !COLS[col].text }))}
-        className={`flex items-center gap-1 font-narrow text-[11px] font-bold uppercase tracking-[0.22em] ${active ? "text-gold" : "text-cream/60 hover:text-cream"} ${cls}`}
+        className={`flex items-center gap-1 font-narrow text-[11px] font-bold uppercase tracking-[0.22em] ${active ? "text-paper" : "text-paper/70 hover:text-paper"} ${cls}`}
         aria-label={`Sort by ${COLS[col].label}`}
       >
         {COLS[col].label}
@@ -59,14 +59,14 @@ export default function FrontrunnerRace() {
           kicker="Ranked by market cap"
           title="Frontrunner race"
           aside={
-            <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="font-narrow font-bold uppercase tracking-[0.16em] text-gold hover:text-cream">
+            <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="font-narrow font-bold uppercase tracking-[0.16em] text-mark hover:text-ink">
               Polymarket ↗
             </a>
           }
         />
-        <div className="border-[3px] border-cream bg-ink-2 shadow-brutal-gold">
-          <div className={`${grid} border-b-[3px] border-gold bg-ink px-4 py-2.5`}>
-            <span className="font-narrow text-[11px] font-bold uppercase tracking-[0.22em] text-cream/60">#</span>
+        <div className="border-2 border-ink bg-paper">
+          <div className={`${grid} bg-ink px-4 py-2.5`}>
+            <span className="font-narrow text-[11px] font-bold uppercase tracking-[0.22em] text-paper/70">#</span>
             {head("name")}
             {head("odds", "justify-end")}
             {head("mcap", "hidden justify-end md:flex")}
@@ -74,7 +74,7 @@ export default function FrontrunnerRace() {
           </div>
           {!oddsLoaded
             ? Array.from({ length: 8 }, (_, i) => (
-                <div key={i} className={`${grid} border-b border-cream/10 px-4 py-3 last:border-0`}>
+                <div key={i} className={`${grid} border-b border-ink/10 px-4 py-3 last:border-0`}>
                   <span className="skeleton h-5 w-5" />
                   <span className="skeleton h-5 w-40" />
                   <span className="skeleton h-5 w-12 justify-self-end" />
@@ -84,19 +84,19 @@ export default function FrontrunnerRace() {
                 <Link
                   key={r.id}
                   href={`/candidates/#${r.id}`}
-                  className={`${grid} border-b border-cream/10 px-4 py-2.5 transition last:border-0 odd:bg-cream/[0.03] hover:bg-cream/[0.07]`}
+                  className={`${grid} border-b border-ink/10 px-4 py-2.5 transition last:border-0 odd:bg-lime/[0.07] hover:bg-mark/10`}
                 >
-                  <span className={`font-slab text-lg ${i < 3 ? "text-gold" : "text-cream/60"}`}>{i + 1}</span>
+                  <span className={`font-head text-2xl ${i < 3 ? "text-mark" : "text-ink/60"}`}>{i + 1}</span>
                   <span className="flex min-w-0 items-center gap-3">
                     <Avatar c={r} size={36} />
                     <span className="min-w-0">
                       <span className="block truncate font-bold uppercase">{r.name}</span>
-                      <span className="block font-narrow text-xs font-bold uppercase tracking-[0.14em]" style={{ color: r.party === "I" ? "var(--color-gold)" : r.party === "R" ? "var(--color-red-hot)" : "var(--color-sky)" }}>
+                      <span className="block font-narrow text-xs font-bold uppercase tracking-[0.14em]" style={{ color: r.party === "I" ? "var(--color-mark)" : r.party === "R" ? "var(--color-red-hot)" : "var(--color-sky)" }}>
                         {PARTIES[r.party].short} · ${r.ticker} · {raceById(r.race).short}
                       </span>
                     </span>
                   </span>
-                  <span className="text-right font-slab text-lg tabular-nums text-gold">{fmtOdds(r.odds)}</span>
+                  <span className="text-right font-head text-2xl tabular-nums text-mark">{fmtOdds(r.odds)}</span>
                   <span className="hidden text-right font-mono text-sm tabular-nums md:block">{r.market ? fmtUsdShort(r.market.marketCap) : "Soon"}</span>
                   <span className={`hidden text-right font-mono text-sm tabular-nums md:block ${changeColor(r.market?.change24h)}`}>
                     {r.market ? fmtDir(r.market.change24h) : "—"}
@@ -104,9 +104,9 @@ export default function FrontrunnerRace() {
                 </Link>
               ))}
         </div>
-        <p className="mt-4 text-center font-narrow text-sm font-bold uppercase tracking-[0.16em] text-cream/55">Odds are for that candidate&apos;s own race</p>
+        <p className="mt-4 text-center font-narrow text-sm font-bold uppercase tracking-[0.16em] text-ink/55">Odds are for that candidate&apos;s own race</p>
         <div className="mt-3 text-center">
-          <Link href="/candidates/" className="font-narrow font-bold uppercase tracking-[0.16em] text-gold hover:text-cream">
+          <Link href="/candidates/" className="font-narrow font-bold uppercase tracking-[0.16em] text-mark hover:text-ink">
             All {rows.length} candidates →
           </Link>
         </div>

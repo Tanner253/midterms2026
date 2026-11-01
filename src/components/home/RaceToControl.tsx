@@ -41,13 +41,13 @@ export default function RaceToControl() {
           kicker="Who's winning Congress"
           title="Race for Congress"
           aside={
-            <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="font-narrow font-bold uppercase tracking-[0.16em] text-gold hover:text-cream">
+            <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="font-narrow font-bold uppercase tracking-[0.16em] text-mark hover:text-ink">
               Party odds on Polymarket ↗
             </a>
           }
         />
 
-        <div className="border-[3px] border-cream bg-ink-2 p-4 shadow-brutal-gold sm:p-6">
+        <div className="border-2 border-ink bg-paper p-4 sm:p-6">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
             {CHAMBERS.map((c) => {
               const odds = party[c.key];
@@ -55,7 +55,7 @@ export default function RaceToControl() {
               const lead = !known ? null : odds.R! > odds.D! ? "R" : odds.D! > odds.R! ? "D" : null;
               return (
                 <div key={c.key}>
-                  <a href={SITE.control[c.key].event} target="_blank" rel="noopener noreferrer" className="mb-3 block font-slab text-xl uppercase hover:text-gold sm:text-2xl">
+                  <a href={SITE.control[c.key].event} target="_blank" rel="noopener noreferrer" className="mb-2 block font-head text-4xl uppercase leading-none hover:text-mark">
                     {c.title}
                   </a>
                   <div className="flex items-end justify-between gap-4">
@@ -68,7 +68,7 @@ export default function RaceToControl() {
                     d={drawn && known ? odds.D! : 0}
                     marker={`★ ${c.magic} to win ★`}
                   />
-                  {c.note && <p className="-mt-2 font-narrow text-xs font-bold uppercase tracking-[0.16em] text-cream/60">{c.note}</p>}
+                  {c.note && <p className="font-narrow text-xs font-bold uppercase tracking-[0.16em] text-ink/60">{c.note}</p>}
                 </div>
               );
             })}
@@ -78,7 +78,7 @@ export default function RaceToControl() {
             label="The coin vote · candidate market cap by party"
             r={drawn && capTotal ? caps.R / capTotal : 0}
             d={drawn && capTotal ? caps.D / capTotal : 0}
-            empty={capTotal ? undefined : "Polls open when the candidate coins launch"}
+            empty={capTotal ? undefined : "Polls open at launch"}
             rightNote={capTotal ? `${fmtUsdShort(caps.R)} vs ${fmtUsdShort(caps.D)}` : undefined}
           />
 
@@ -98,9 +98,9 @@ function PartyEnd({ side, label, value, lead, called }: { side: "R" | "D"; label
     <div className={side === "D" ? "text-right" : ""}>
       <div className={`flex items-center gap-2 font-narrow text-sm font-bold uppercase tracking-[0.2em] ${color} ${side === "D" ? "justify-end" : ""}`}>
         {label}
-        {lead && <span className="bg-gold px-1.5 py-0.5 text-[11px] tracking-[0.14em] text-ink">{called ? "Called" : "Leads"}</span>}
+        {lead && <span className="bg-ink px-1.5 py-0.5 text-[11px] tracking-[0.14em] text-paper">{called ? "Called" : "Leads"}</span>}
       </div>
-      <div className={`font-slab text-[clamp(36px,5vw,60px)] leading-none tabular-nums ${color}`}>{value}</div>
+      <div className={`font-head text-[clamp(48px,7vw,84px)] leading-none tabular-nums ${color}`}>{value}</div>
     </div>
   );
 }
@@ -122,13 +122,13 @@ function Bar({
 }) {
   return (
     <div className={marker ? "mb-8 mt-5" : "mt-5"}>
-      <div className="mb-1.5 flex justify-between gap-3 font-narrow text-[11px] font-bold uppercase tracking-[0.2em] text-cream/60">
+      <div className="mb-1.5 flex justify-between gap-3 font-narrow text-[11px] font-bold uppercase tracking-[0.2em] text-ink/60">
         <span>{label}</span>
         {rightNote && <span className="tabular-nums">{rightNote}</span>}
       </div>
-      <div className="relative h-9 border-[3px] border-ink bg-ink-3">
+      <div className="relative h-9 border-2 border-ink bg-paper-3">
         {empty ? (
-          <div className="flex h-full items-center justify-center border-2 border-dashed border-cream/20 px-2 text-center font-narrow text-xs font-bold uppercase tracking-[0.18em] text-cream/55">
+          <div className="flex h-full items-center justify-center border-2 border-dashed border-ink/30 px-2 text-center font-narrow text-xs font-bold uppercase tracking-[0.18em] text-ink/55">
             {empty}
           </div>
         ) : (
@@ -137,9 +137,9 @@ function Bar({
             <div className="absolute inset-y-0 right-0 bg-blue transition-[width] duration-1000 ease-out" style={{ width: `${d * 100}%` }} />
           </>
         )}
-        <div aria-hidden="true" className="absolute inset-y-[-8px] left-1/2 w-[3px] -translate-x-1/2 bg-gold" />
+        {!empty && <div aria-hidden="true" className="absolute inset-y-[-8px] left-1/2 w-[3px] -translate-x-1/2 bg-ink" />}
         {marker && (
-          <span className="absolute -bottom-[30px] left-1/2 -translate-x-1/2 whitespace-nowrap bg-gold px-1.5 py-0.5 font-narrow text-[10px] font-bold uppercase tracking-[0.16em] text-ink">
+          <span className="absolute -bottom-[30px] left-1/2 -translate-x-1/2 whitespace-nowrap bg-ink px-1.5 py-0.5 font-narrow text-[10px] font-bold uppercase tracking-[0.16em] text-paper">
             {marker}
           </span>
         )}
@@ -153,7 +153,7 @@ function TopCoin({ r, side }: { r?: CandidateRow; side: "R" | "D" }) {
   return (
     <Link
       href={`/candidates/#${r.id}`}
-      className={`flex items-center gap-3 border-[3px] border-ink bg-ink px-3 py-2 transition hover:-translate-y-0.5 ${side === "D" ? "sm:flex-row-reverse sm:text-right" : ""}`}
+      className={`flex items-center gap-3 border-2 border-ink bg-paper px-3 py-2 transition hover:-translate-y-0.5 ${side === "D" ? "sm:flex-row-reverse sm:text-right" : ""}`}
     >
       <Avatar c={r} size={44} />
       <span className="min-w-0 flex-1">
@@ -162,7 +162,7 @@ function TopCoin({ r, side }: { r?: CandidateRow; side: "R" | "D" }) {
         </span>
         <span className="block truncate font-bold uppercase">{r.name}</span>
       </span>
-      <span className="font-slab text-xl tabular-nums text-gold">{r.market ? fmtUsdShort(r.market.marketCap) : "Soon"}</span>
+      <span className="font-head text-3xl tabular-nums text-mark">{r.market ? fmtUsdShort(r.market.marketCap) : "Soon"}</span>
     </Link>
   );
 }

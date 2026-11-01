@@ -62,17 +62,17 @@ export default function CandidatesView() {
   return (
     <>
       <PageHero
-        variant="red"
+       
         kicker={`${CANDIDATES.length} coins · ${RACES.length} races`}
         title="The Candidates"
-        titleClass="text-[clamp(40px,6.4vw,96px)]"
-        subtitle={`${CANDIDATES.length} names on the board, ${alive} still in the running. Every coin feeds $${SITE.ticker}.`}
+        titleClass="text-[clamp(64px,8.4vw,120px)]"
+                subtitle={`${CANDIDATES.length} names on the board, ${alive} still in the running. Every coin feeds $${SITE.ticker}.`}
         aside={
           <div className="grid auto-rows-fr grid-cols-2 gap-3 md:w-[440px]">
-            <StatBlock tone="gold" label="Still in" value={`${alive}/${CANDIDATES.length}`} valueClass="text-[clamp(24px,3vw,36px)]" />
-            <StatBlock label="Total market cap" value={pre ? (loaded ? "Pre-launch" : "—") : fmtUsdShort(totalCap)} valueClass="text-[clamp(20px,2.6vw,32px)]" />
-            <StatBlock tone="cream" label="Avg 24h change" value={fmtPct(avgChange)} valueClass="text-[clamp(20px,2.6vw,32px)]" />
-            <StatBlock tone="red" label="24h volume" value={pre ? "—" : fmtUsdShort(totalVol)} valueClass="text-[clamp(20px,2.6vw,32px)]" />
+            <StatBlock tone="gold" label="Still in" value={`${alive}/${CANDIDATES.length}`} valueClass="text-[clamp(36px,4.4vw,52px)]" />
+            <StatBlock label="Total market cap" value={pre ? (loaded ? "Pre-launch" : "—") : fmtUsdShort(totalCap)} valueClass="text-[clamp(28px,2.9vw,38px)]" />
+            <StatBlock tone="cream" label="Avg 24h change" value={fmtPct(avgChange)} valueClass="text-[clamp(28px,2.9vw,38px)]" />
+            <StatBlock tone="red" label="24h volume" value={pre ? "—" : fmtUsdShort(totalVol)} valueClass="text-[clamp(28px,2.9vw,38px)]" />
           </div>
         }
       />
@@ -88,7 +88,7 @@ export default function CandidatesView() {
               { v: "cards", l: "Cards" },
             ]}
           />
-          <span className="font-narrow text-xs font-bold uppercase tracking-[0.2em] text-cream/60">
+          <span className="font-narrow text-xs font-bold uppercase tracking-[0.2em] text-ink/60">
             {byMcap ? "Ranked by market cap" : "Ranked by market cap once coins launch"}
           </span>
         </div>
@@ -103,9 +103,9 @@ export default function CandidatesView() {
           </div>
         )}
 
-        <p className="mt-5 font-narrow text-sm font-bold uppercase tracking-[0.16em] text-cream/55">
+        <p className="mt-5 font-narrow text-sm font-bold uppercase tracking-[0.16em] text-ink/55">
           Odds are for that candidate&apos;s own race, live from{" "}
-          <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="text-gold underline-offset-2 hover:underline">
+          <a href={SITE.polymarketEvent} target="_blank" rel="noopener noreferrer" className="text-mark underline-offset-2 hover:underline">
             Polymarket ↗
           </a>
         </p>
@@ -132,16 +132,16 @@ function Board({ rows, byMcap, ready }: { rows: Ranked[]; byMcap: boolean; ready
   const th = "font-narrow text-[10px] font-bold uppercase tracking-[0.22em]";
 
   return (
-    <div className="border-[3px] border-cream bg-ink-2 shadow-brutal-gold">
-      <div className={`${grid} sticky top-[124px] z-20 border-b-[3px] border-gold bg-ink py-2.5 text-cream/60 lg:top-[68px]`}>
+    <div className="border-2 border-ink bg-paper">
+      <div className={`${grid} sticky top-[124px] z-20 bg-ink py-2.5 text-paper/75 lg:top-[68px]`}>
         <span className={th}>
           <span className="md:hidden">#</span>
           <span className="hidden md:inline">Pos</span>
         </span>
         <span className={`${th} hidden md:block`}>Mv</span>
         <span className={th}>Candidate</span>
-        <span className={`${th} text-right ${byMcap ? "hidden md:block" : "text-gold"}`}>Odds</span>
-        <span className={`${th} text-right ${byMcap ? "text-gold" : "hidden md:block"}`}>Mkt cap</span>
+        <span className={`${th} text-right ${byMcap ? "hidden md:block" : "text-paper"}`}>Odds</span>
+        <span className={`${th} text-right ${byMcap ? "text-paper" : "hidden md:block"}`}>Mkt cap</span>
         <span className={`${th} text-right`}>
           <span className="md:hidden">{byMcap ? "24H" : "7D"}</span>
           <span className="hidden md:inline">24H</span>
@@ -156,9 +156,9 @@ function Board({ rows, byMcap, ready }: { rows: Ranked[]; byMcap: boolean; ready
           const sub = r.status === "running" ? raceById(r.race).short : statusLabel(r);
           const cells = (
             <>
-              <span className={`font-slab text-lg md:text-[22px] ${r.rank < 3 ? "text-gold" : "text-cream/90"}`}>{r.rank + 1}</span>
+              <span className={`font-head text-2xl md:text-3xl ${r.rank < 3 ? "text-mark" : "text-ink"}`}>{r.rank + 1}</span>
               <span className="hidden font-mono text-xs font-bold md:block">
-                {!ready ? "" : r.move > 0 ? <span className="text-lime">▲{r.move}</span> : r.move < 0 ? <span className="text-red-hot">▼{-r.move}</span> : <span className="text-cream/40">–</span>}
+                {!ready ? "" : r.move > 0 ? <span className="text-lime">▲{r.move}</span> : r.move < 0 ? <span className="text-red-hot">▼{-r.move}</span> : <span className="text-ink/40">–</span>}
               </span>
               <span className="flex min-w-0 items-center gap-2.5">
                 <Avatar c={r} size={34} square dim={false} />
@@ -167,15 +167,15 @@ function Board({ rows, byMcap, ready }: { rows: Ranked[]; byMcap: boolean; ready
                     {r.name}
                   </span>
                   <span className="block truncate font-narrow text-[11px] font-bold uppercase tracking-[0.12em]">
-                    <span className="text-gold">${r.ticker}</span>
-                    <span className={tone === "out" ? "text-red-hot/80" : tone === "gold" ? "text-gold" : "text-cream/60"}> · {sub}</span>
+                    <span className="text-mark">${r.ticker}</span>
+                    <span className={tone === "out" ? "text-red-hot/80" : tone === "gold" ? "text-mark" : "text-ink/60"}> · {sub}</span>
                   </span>
                 </span>
               </span>
-              <span className={`text-right font-mono text-xs font-bold md:text-sm tabular-nums ${byMcap ? "hidden md:block" : "text-gold"}`}>
+              <span className={`text-right font-mono text-xs font-bold md:text-sm tabular-nums ${byMcap ? "hidden md:block" : "text-mark"}`}>
                 {ready || byMcap ? fmtOdds(r.odds) : <span className="skeleton ml-auto block h-4 w-10" />}
               </span>
-              <span className={`text-right font-mono text-xs tabular-nums md:text-sm ${byMcap ? "" : "hidden text-cream/50 md:block"}`}>
+              <span className={`text-right font-mono text-xs tabular-nums md:text-sm ${byMcap ? "" : "hidden text-ink/50 md:block"}`}>
                 {r.market ? fmtUsdShort(r.market.marketCap) : "Soon"}
               </span>
               <span className={`text-right font-mono text-xs tabular-nums md:text-sm ${changeColor(byMcap ? r.market?.change24h : r.oddsWeek)}`}>
@@ -186,11 +186,11 @@ function Board({ rows, byMcap, ready }: { rows: Ranked[]; byMcap: boolean; ready
               {anyHolders && <span className="hidden text-right font-mono text-sm tabular-nums md:block">{r.holders ? fmtCompact(r.holders.count) : "—"}</span>}
             </>
           );
-          const cls = `${grid} absolute inset-x-0 border-b border-cream/10 hover:bg-cream/[0.06] target:bg-gold/15 scroll-mt-48 ${
+          const cls = `${grid} absolute inset-x-0 border-b border-ink/10 hover:bg-mark/10 target:bg-mark/15 scroll-mt-48 ${
             animate ? "transition-[transform,background-color] duration-700 ease-[cubic-bezier(.34,.9,.3,1)]" : ""
           } ${
             tone === "out" ? "opacity-55" : ""
-          } ${r.rank % 2 ? "bg-cream/[0.025]" : ""}`;
+          } ${r.rank % 2 ? "bg-lime/[0.07]" : ""}`;
           const style = { height: ROW_H, transform: `translateY(${r.rank * ROW_H}px)` };
           return r.mint ? (
             <a key={r.id} id={r.id} href={pumpUrl(r.mint)} target="_blank" rel="noopener noreferrer" aria-label={`${r.name}: buy $${r.ticker} on pump.fun`} className={cls} style={style}>

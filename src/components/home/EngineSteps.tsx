@@ -10,7 +10,7 @@ import SectionTitle from "../SectionTitle";
 import { Wrap } from "../ui";
 
 const STEP_MS = 6000;
-const COLORS = ["var(--color-sky)", "var(--color-red-hot)", "var(--color-gold)", "var(--color-lime)"];
+const COLORS = ["var(--color-sky)", "var(--color-red-hot)", "var(--color-mark)", "var(--color-lime)"];
 
 // WC's ecosystem explainer: an auto-playing "broadcast" of the four steps of every fee cycle.
 export default function EngineSteps() {
@@ -43,9 +43,9 @@ export default function EngineSteps() {
           title={`How it feeds $${SITE.ticker}`}
           aside={
             stats?.nextCycleAt ? (
-              <div className="font-narrow font-bold uppercase tracking-[0.16em] text-cream/70">
+              <div className="font-narrow font-bold uppercase tracking-[0.16em] text-ink/70">
                 Next cycle in{" "}
-                <span className="text-cream">
+                <span className="text-ink">
                   <CycleTimer next={stats.nextCycleAt} intervalMs={stats.cycleIntervalMs} />
                 </span>
               </div>
@@ -53,7 +53,7 @@ export default function EngineSteps() {
           }
         />
         <div
-          className="border-[3px] border-cream bg-ink-2 shadow-brutal-gold"
+          className="border-2 border-ink bg-paper "
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onFocusCapture={() => setPaused(true)}
@@ -61,26 +61,26 @@ export default function EngineSteps() {
           onTouchStart={() => setPaused(true)}
         >
           <div className="relative grid min-h-[300px] overflow-hidden md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]" role="tabpanel" id="engine-panel" aria-labelledby={`engine-tab-${step}`}>
-            <div className="scanlines pointer-events-none absolute inset-0" aria-hidden="true" />
-            <div className="relative flex items-center justify-center border-b-[3px] border-cream/15 bg-ink p-6 md:border-b-0 md:border-r-[3px]">
+            <div className="greenbar pointer-events-none absolute inset-0" aria-hidden="true" />
+            <div className="relative flex items-center justify-center border-b-[3px] border-ink/15 bg-paper p-6 md:border-b-0 md:border-r-[3px]">
               <Illustration step={step} color={color} />
             </div>
             <div key={step} className="relative animate-rise p-6 sm:p-8">
               <div className="font-narrow text-sm font-bold uppercase tracking-[0.3em]" style={{ color }}>
                 Step {s.num} / 0{ENGINE_STEPS.length}
               </div>
-              <h3 className="mt-2 font-slab text-[clamp(36px,5vw,56px)] uppercase leading-none" style={{ color }}>
+              <h3 className="mt-2 font-head text-[clamp(56px,8vw,88px)] uppercase leading-none" style={{ color }}>
                 {s.title}
               </h3>
-              <p className="mt-4 max-w-xl text-lg text-cream/85">{s.body}</p>
-              <div className="mt-6 inline-flex flex-col border-[3px] border-ink bg-ink px-4 py-3 shadow-brutal-sm">
-                <span className="font-narrow text-[11px] font-bold uppercase tracking-[0.24em] text-cream/60">{live[step].label}</span>
-                <span className="font-slab text-2xl tabular-nums">{pre ? "Starts at launch" : live[step].value}</span>
+              <p className="mt-4 max-w-xl text-lg text-ink/85">{s.body}</p>
+              <div className="mt-6 inline-flex flex-col border-2 border-ink bg-paper px-4 py-3 ">
+                <span className="font-narrow text-[11px] font-bold uppercase tracking-[0.24em] text-ink/60">{live[step].label}</span>
+                <span className="font-head text-4xl tabular-nums">{pre ? "Starts at launch" : live[step].value}</span>
               </div>
             </div>
           </div>
 
-          <div role="tablist" aria-label="Fee cycle steps" className="grid grid-cols-2 border-t-[3px] border-cream sm:grid-cols-4">
+          <div role="tablist" aria-label="Fee cycle steps" className="grid grid-cols-2 border-t-2 border-ink sm:grid-cols-4">
             {ENGINE_STEPS.map((x, i) => (
               <button
                 key={x.num}
@@ -93,11 +93,11 @@ export default function EngineSteps() {
                   setStep(i);
                   setPaused(true);
                 }}
-                className={`relative flex min-h-[52px] items-center gap-2 overflow-hidden border-cream/20 px-4 py-3 text-left transition [&:nth-child(odd)]:border-r-2 sm:[&:not(:last-child)]:border-r-2 ${
-                  i === step ? "bg-cream text-ink" : "text-cream/75 hover:bg-cream/10"
+                className={`relative flex min-h-[52px] items-center gap-2 overflow-hidden border-ink/20 px-4 py-3 text-left transition [&:nth-child(odd)]:border-r-2 sm:[&:not(:last-child)]:border-r-2 ${
+                  i === step ? "bg-ink text-paper" : "text-ink/75 hover:bg-ink/10"
                 }`}
               >
-                <span className="font-slab text-lg leading-none">{x.num}</span>
+                <span className="font-head text-lg leading-none">{x.num}</span>
                 <span className="font-narrow text-sm font-bold uppercase tracking-[0.12em]">{x.title}</span>
                 {i === step && !paused && !reduced && (
                   <span
@@ -120,8 +120,8 @@ function Illustration({ step, color }: { step: number; color: string }) {
   if (step === 0)
     return (
       <svg viewBox="0 0 200 140" className="w-full max-w-[280px]" aria-hidden="true">
-        <rect x="70" y="70" width="60" height="50" fill="var(--color-navy-2)" stroke="var(--color-cream)" strokeWidth="4" />
-        <rect x="88" y="66" width="24" height="8" fill="var(--color-cream)" />
+        <rect x="70" y="70" width="60" height="50" fill="var(--color-stock-2)" stroke="var(--color-ink)" strokeWidth="4" />
+        <rect x="88" y="66" width="24" height="8" fill="var(--color-ink)" />
         {[-70, -35, 0, 35, 70].map((dx, i) => (
           <circle
             key={dx}
@@ -139,9 +139,9 @@ function Illustration({ step, color }: { step: number; color: string }) {
   if (step === 1)
     return (
       <svg viewBox="0 0 200 140" className="w-full max-w-[280px]" aria-hidden="true">
-        <circle cx="100" cy="70" r="56" fill="var(--color-ink-3)" stroke="var(--color-cream)" strokeWidth="4" />
+        <circle cx="100" cy="70" r="56" fill="var(--color-paper-3)" stroke="var(--color-ink)" strokeWidth="4" />
         <path d="M100 70V14a56 56 0 0 1 45 33z" fill={color} stroke="var(--color-ink)" strokeWidth="3" style={{ transformOrigin: "100px 70px", animation: "flame 1.6s ease-in-out infinite" }} />
-        <text x="100" y="98" textAnchor="middle" fontFamily="var(--ff-slab)" fontSize="26" fill="var(--color-cream)">
+        <text x="100" y="98" textAnchor="middle" fontFamily="var(--ff-head)" fontWeight="900" fontSize="34" fill="var(--color-ink)">
           15%
         </text>
       </svg>
@@ -149,7 +149,7 @@ function Illustration({ step, color }: { step: number; color: string }) {
   if (step === 2) return <Flame />;
   return (
     <svg viewBox="0 0 200 140" className="w-full max-w-[280px]" aria-hidden="true">
-      <rect x="62" y="74" width="76" height="52" fill="var(--color-navy-2)" stroke="var(--color-cream)" strokeWidth="4" />
+      <rect x="62" y="74" width="76" height="52" fill="var(--color-stock-2)" stroke="var(--color-ink)" strokeWidth="4" />
       <g style={{ transformOrigin: "100px 74px", animation: "flame 0.6s ease-in-out infinite" }}>
         <path d="M100 18c14 20 28 30 28 52H72c0-14 8-20 14-30 2 10 6 14 10 16-2-16 0-28 4-38z" fill="var(--color-red-hot)" stroke="var(--color-ink)" strokeWidth="4" />
       </g>
@@ -165,9 +165,9 @@ function Flame() {
     <svg viewBox="0 0 200 140" className="w-full max-w-[280px]" aria-hidden="true">
       <g style={{ transformOrigin: "100px 128px", animation: "flame 0.6s ease-in-out infinite" }}>
         <path d="M100 20c18 26 38 40 38 70a38 38 0 0 1-76 0c0-18 10-26 18-38 2 14 8 20 14 22-2-22 0-38 6-54z" fill="var(--color-red-hot)" stroke="var(--color-ink)" strokeWidth="4" />
-        <path d="M100 66c10 12 18 20 18 34a18 18 0 0 1-36 0c0-12 10-20 18-34z" fill="var(--color-gold)" />
+        <path d="M100 66c10 12 18 20 18 34a18 18 0 0 1-36 0c0-12 10-20 18-34z" fill="var(--color-mark)" />
       </g>
-      <circle cx="100" cy="10" r="8" fill="var(--color-gold)" stroke="var(--color-ink)" strokeWidth="3" style={{ ["--dx" as string]: "0px", animation: "coin-in 1.6s ease-in infinite" }} />
+      <circle cx="100" cy="10" r="8" fill="var(--color-mark)" stroke="var(--color-ink)" strokeWidth="3" style={{ ["--dx" as string]: "0px", animation: "coin-in 1.6s ease-in infinite" }} />
     </svg>
   );
 }

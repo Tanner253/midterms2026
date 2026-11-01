@@ -14,45 +14,45 @@ export function Sticker({ size = 200, className = "" }: { size?: number; classNa
           <circle cx="100" cy="100" r="88" />
         </clipPath>
       </defs>
-      <circle cx="100" cy="100" r="96" fill="#f7f0e1" stroke="#060f27" strokeWidth="4" />
+      <circle cx="100" cy="100" r="96" fill="#f2f4ee" stroke="#12151a" strokeWidth="4" />
       <g clipPath={`url(#${clip})`}>
-        <rect x="0" y="0" width="200" height="200" fill="#f7f0e1" />
+        <rect x="0" y="0" width="200" height="200" fill="#f2f4ee" />
         {[0, 1, 2, 3].map((i) => (
-          <rect key={i} x="0" y={128 + i * 16} width="200" height="8" fill="#d62839" />
+          <rect key={i} x="0" y={128 + i * 16} width="200" height="8" fill="#d8232a" />
         ))}
-        <rect x="0" y="0" width="200" height="62" fill="#0b1b42" />
+        <rect x="0" y="0" width="200" height="62" fill="#1d4ed8" />
         {[30, 62, 100, 138, 170].map((x, i) => (
           <path
             key={x}
             transform={`translate(${x} ${i % 2 ? 22 : 36}) scale(0.55)`}
             d="M0-12 3.5-3.7 12.4-3.7 5.3 1.6 8 10.2 0 5 -8 10.2 -5.3 1.6 -12.4-3.7 -3.5-3.7z"
-            fill="#e9b949"
+            fill="#f2f4ee"
           />
         ))}
       </g>
-      <circle cx="100" cy="100" r="88" fill="none" stroke="#060f27" strokeWidth="3" />
+      <circle cx="100" cy="100" r="88" fill="none" stroke="#12151a" strokeWidth="3" />
       <text
         x="100"
         y="104"
         textAnchor="middle"
         textLength="150"
         lengthAdjust="spacingAndGlyphs"
-        fontFamily="var(--ff-slab), Georgia, serif"
-        fontSize="38"
-        fill="#d62839"
-        stroke="#060f27"
+        fontFamily="var(--ff-head), Impact, sans-serif" fontWeight="900"
+        fontSize="50"
+        fill="#d8232a"
+        stroke="#12151a"
         strokeWidth="1.5"
       >
         I VOTED
       </text>
-      <text x="100" y="124" textAnchor="middle" fontFamily="var(--ff-narrow), sans-serif" fontWeight="700" fontSize="15" letterSpacing="3" fill="#0b1b42">
+      <text x="100" y="124" textAnchor="middle" fontFamily="var(--ff-narrow), sans-serif" fontWeight="700" fontSize="15" letterSpacing="3" fill="#1d4ed8">
         ON-CHAIN · 2026
       </text>
     </svg>
   );
 }
 
-const COLORS = ["#d62839", "#f7f0e1", "#3d6fd9", "#e9b949"];
+const COLORS = ["#d8232a", "#f2f4ee", "#6b2fbf", "#f2f4ee"];
 const PIECES = (() => {
   const r = seeded("confetti");
   return Array.from({ length: 54 }, (_, i) => {
@@ -84,7 +84,7 @@ export function VotedCelebration({ onDone }: { onDone: () => void }) {
   }, [onDone, reduced]);
 
   return (
-    <div className="fixed inset-0 z-[70] flex cursor-pointer items-center justify-center bg-ink/50" onClick={onDone} role="status" aria-live="polite">
+    <div className="fixed inset-0 z-[70] flex cursor-pointer items-center justify-center bg-paper/50" onClick={onDone} role="status" aria-live="polite">
       <span className="sr-only">Ballot complete. You voted.</span>
       {!reduced && (
         <div aria-hidden="true" className="absolute left-1/2 top-1/2">
@@ -97,7 +97,7 @@ export function VotedCelebration({ onDone }: { onDone: () => void }) {
                   width: p.w,
                   height: p.h,
                   background: p.color,
-                  border: "1px solid #060f27",
+                  border: "1px solid #12151a",
                   "--x": p.x,
                   "--y": p.y,
                   "--r": p.r,

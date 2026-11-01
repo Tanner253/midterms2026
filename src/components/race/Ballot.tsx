@@ -9,6 +9,7 @@ import { useCandidateRows, type CandidateRow } from "@/lib/market-context";
 import { EMPTY_BALLOT, cleanBallot, decodeBallot, encodeBallot, isComplete, raceWinner, racesFor, scoreBallot, type Ballot as B, type ControlPick } from "@/lib/race";
 import Avatar from "../Avatar";
 import { IconX } from "../icons";
+import { ContestHead, Oval } from "../ui";
 import { Sticker, VotedCelebration } from "./VotedSticker";
 
 const DRAFT_KEY = "mt26-ballot-v1";
@@ -20,13 +21,15 @@ const OFFICES: Office[] = ["Senate", "Governor"];
 const SIDES: ControlPick[] = ["R", "D"];
 
 const Verdict = ({ right }: { right: boolean }) => (
-  <span className={`absolute right-1.5 top-1.5 z-10 px-2 py-0.5 font-narrow text-xs font-bold uppercase ${right ? "bg-lime text-ink" : "bg-red-hot text-cream"}`}>
+  <span className={`absolute right-1.5 top-1.5 z-10 px-2 py-0.5 font-narrow text-xs font-bold uppercase text-paper ${right ? "bg-lime" : "bg-red-hot"}`}>
     {right ? "✓ Called it" : "✗ Missed"}
   </span>
 );
 
-// WC's bracket challenge, midterm-sized: call the House, the Senate and every race, share it, get
-// scored as the results come in.
+const rowCls = (locked: boolean) => `flex min-h-[56px] w-full items-center gap-3 border-t-2 border-ink px-3 py-2 text-left transition first:border-t-0 ${locked ? "cursor-default" : "hover:bg-paper-3"}`;
+
+// WC's bracket challenge, midterm-sized: a real ballot. Mark the House, the Senate and every race,
+// share it, and get scored as the results come in.
 export default function Ballot() {
   const rows = useCandidateRows();
   const [ballot, setBallot] = useState<B>(EMPTY_BALLOT);
@@ -72,58 +75,47 @@ export default function Ballot() {
     <div>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="font-slab text-[clamp(30px,5vw,56px)] uppercase leading-none">Call the race</h2>
-          <p className="mt-2 max-w-xl text-cream/75">Pick the House, the Senate and every race on the board. Share your ballot and watch it score as the results come in.</p>
+          <h2 className="font-head text-[clamp(44px,7vw,84px)] uppercase leading-[0.92]">Call the race</h2>
+          <p className="mt-2 max-w-xl text-ink/75">Mark the House, the Senate and every race on the board. Share your ballot and watch it score as the results come in.</p>
         </div>
         {shared && (
-          <button type="button" onClick={makeOwn} className="border-2 border-cream px-4 py-2 font-narrow font-bold uppercase tracking-[0.14em] hover:bg-cream hover:text-ink">
+          <button type="button" onClick={makeOwn} className="border-2 border-ink px-4 py-2 font-narrow font-bold uppercase tracking-[0.14em] hover:bg-ink hover:text-paper">
             Make your own →
           </button>
         )}
       </div>
 
-      <div className="mb-5 border-[3px] border-gold bg-ink px-4 py-3 font-narrow font-bold uppercase tracking-[0.14em]">
+      <div className="mb-5 border-2 border-ink bg-paper-2 px-4 py-3 font-narrow font-bold uppercase tracking-[0.14em]">
         {BALLOT.prize ? (
           <>
-            <span className="text-gold">
+            <span className="text-mark">
               {BALLOT.prize.winners} winners × {BALLOT.prize.solEach} SOL
             </span>
-            <span className="ml-2 text-cream/80">{BALLOT.prize.rules}</span>
+            <span className="ml-2 text-ink/80">{BALLOT.prize.rules}</span>
           </>
         ) : (
-          <span className="text-cream/80">Giveaways for the best ballots are announced on our socials.</span>
+          <span className="text-ink/80">Giveaways for the best ballots are announced on our socials.</span>
         )}
       </div>
 
-      {shared && (
-        <div className="mb-4 bg-gold px-4 py-2 font-narrow text-sm font-bold uppercase tracking-[0.16em] text-ink">Shared ballot · read only</div>
-      )}
+      {shared && <div className="mb-4 bg-mark px-4 py-2 font-narrow text-sm font-bold uppercase tracking-[0.16em] text-paper">Shared ballot · read only</div>}
 
       <div className="grid gap-4 md:grid-cols-2">
         {CHAMBERS.map(({ key, label }) => {
           const truth = CONTROL[key];
           const pick = shown[key];
           return (
-            <div key={key} className="relative border-[3px] border-gold bg-ink p-4 shadow-brutal-gold">
+            <div key={key} className="relative border-2 border-ink bg-paper">
               {truth && pick && <Verdict right={truth === pick} />}
-              <div className="mb-3 font-narrow text-xs font-bold uppercase tracking-[0.24em] text-gold">{label}</div>
-              <div className="grid grid-cols-2 gap-3">
-                {SIDES.map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    disabled={!!shared}
-                    aria-pressed={pick === p}
-                    onClick={() => update({ ...ballot, [key]: p })}
-                    className={`min-h-[64px] border-[3px] px-2 py-3 font-slab text-[clamp(15px,2.4vw,22px)] uppercase leading-tight transition ${
-                      pick === p ? "border-cream" : "border-ink bg-ink-3 text-cream/70"
-                    } ${shared ? "cursor-default" : "hover:-translate-y-0.5"}`}
-                    style={pick === p ? { background: PARTIES[p].color, color: PARTIES[p].on } : undefined}
-                  >
+              <ContestHead title={label} note="Vote for one" />
+              {SIDES.map((p) => (
+                <button key={p} type="button" disabled={!!shared} aria-pressed={pick === p} onClick={() => update({ ...ballot, [key]: p })} className={rowCls(!!shared)}>
+                  <Oval size={22} filled={pick === p} />
+                  <span className="font-head text-[28px] uppercase leading-none" style={{ color: PARTIES[p].color }}>
                     {PARTIES[p].plural}
-                  </button>
-                ))}
-              </div>
+                  </span>
+                </button>
+              ))}
             </div>
           );
         })}
@@ -131,10 +123,7 @@ export default function Ballot() {
 
       {OFFICES.map((office) => (
         <section key={office} className="mt-8">
-          <h3 className="mb-3 flex items-center gap-2 font-narrow text-sm font-bold uppercase tracking-[0.28em] text-gold">
-            <span aria-hidden="true" className="h-1 w-3 bg-gold" />
-            {office}
-          </h3>
+          <h3 className="mb-3 font-head text-3xl uppercase leading-none">{office}</h3>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {racesFor(office).map((race) => (
               <RacePick
@@ -152,12 +141,12 @@ export default function Ballot() {
       ))}
 
       <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div className="border-[3px] border-cream/30 bg-ink-2 px-4 py-3">
-          <div className="font-narrow text-xs font-bold uppercase tracking-[0.24em] text-cream/60">Ballot vs reality</div>
-          <div className="font-slab text-xl uppercase">
+        <div className="border-2 border-ink bg-paper-2 px-4 py-3">
+          <div className="font-narrow text-xs font-bold uppercase tracking-[0.22em] text-ink/60">Ballot vs reality</div>
+          <div className="font-head text-3xl uppercase leading-tight">
             {score.decided ? `${score.right}/${score.decided} calls right so far` : complete ? "Nothing decided yet" : `${picked}/${total} picks made`}
           </div>
-          <p className="mt-1 text-sm text-cream/60">Calls are scored only once they're decided: each race as it's called, the House and Senate once control is called.</p>
+          <p className="mt-1 text-sm text-ink/60">Calls are scored only once they're decided: each race as it's called, the House and Senate once control is called.</p>
         </div>
         {complete && (
           <div className="flex flex-wrap gap-2">
@@ -170,7 +159,7 @@ export default function Ballot() {
                   setTimeout(() => setCopied(false), 1800);
                 } catch {}
               }}
-              className="border-[3px] border-ink bg-gold px-4 py-3 font-narrow font-bold uppercase tracking-[0.14em] text-ink shadow-brutal-sm"
+              className="border-2 border-ink bg-mark px-4 py-3 font-narrow font-bold uppercase tracking-[0.14em] text-paper"
             >
               <span aria-live="polite">{copied ? "Link copied" : "Copy link"}</span>
             </button>
@@ -178,7 +167,7 @@ export default function Ballot() {
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}&url=${encodeURIComponent(link)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 border-[3px] border-ink bg-cream px-4 py-3 font-narrow font-bold uppercase tracking-[0.14em] text-ink shadow-brutal-sm"
+              className="flex items-center gap-2 border-2 border-ink bg-ink px-4 py-3 font-narrow font-bold uppercase tracking-[0.14em] text-paper"
             >
               <IconX /> Share on X
             </a>
@@ -189,9 +178,9 @@ export default function Ballot() {
 
       {complete && call && !shared && (
         <div className="mt-8 flex flex-col items-center justify-center gap-4 text-center sm:flex-row sm:text-left">
-          <Sticker size={96} className="shrink-0 -rotate-6 drop-shadow-[4px_5px_0_rgba(0,0,0,0.45)]" />
-          <p className="font-slab text-[clamp(22px,3.4vw,36px)] uppercase leading-tight">
-            <span className="text-gold">{call}</span>
+          <Sticker size={96} className="shrink-0 -rotate-6" />
+          <p className="font-head text-[clamp(32px,4.4vw,52px)] uppercase leading-[0.95]">
+            <span className="text-mark">{call}</span>
           </p>
         </div>
       )}
@@ -201,33 +190,24 @@ export default function Ballot() {
   );
 }
 
-// One race on the ballot: tap a candidate to pick them.
+// One race on the ballot: mark a candidate's oval to pick them.
 function RacePick({ id, label, rows, pick, locked, onPick }: { id: RaceId; label: string; rows: CandidateRow[]; pick: string | null; locked: boolean; onPick: (candidate: string) => void }) {
   const winner = raceWinner(id);
   return (
-    <div className="relative border-[3px] border-cream bg-ink-2 shadow-brutal-md">
+    <div className="relative border-2 border-ink bg-paper">
       {winner && pick && <Verdict right={winner.id === pick} />}
-      <div className="border-b-[3px] border-cream/20 px-3 py-2 font-slab text-sm uppercase">{label}</div>
-      <div className="grid grid-cols-2">
-        {rows.map((r) => (
-          <button
-            key={r.id}
-            type="button"
-            disabled={locked}
-            aria-pressed={pick === r.id}
-            onClick={() => onPick(r.id)}
-            className={`flex min-w-0 flex-col items-center gap-1.5 p-3 text-center transition [&:first-child]:border-r-2 [&:first-child]:border-cream/15 ${
-              pick === r.id ? "bg-gold text-ink" : locked ? "" : "hover:bg-cream/10"
-            } ${locked ? "cursor-default" : ""}`}
-          >
-            <Avatar c={r} size={52} />
-            <span className="w-full font-bold uppercase leading-tight">{r.name}</span>
-            <span className={`font-narrow text-xs font-bold uppercase tracking-[0.14em] ${pick === r.id ? "text-ink/70" : "text-cream/60"}`}>
-              {PARTIES[r.party].short} · {fmtOdds(r.odds)}
-            </span>
-          </button>
-        ))}
-      </div>
+      <ContestHead title={label} note="Vote for one" />
+      {rows.map((r) => (
+        <button key={r.id} type="button" disabled={locked} aria-pressed={pick === r.id} onClick={() => onPick(r.id)} className={rowCls(locked)}>
+          <Oval size={20} filled={pick === r.id} />
+          <Avatar c={r} size={40} />
+          <span className="min-w-0 flex-1">
+            <span className="block truncate font-bold uppercase leading-tight">{r.name}</span>
+            <span className="font-narrow text-xs font-bold uppercase tracking-[0.14em] text-ink/60">{PARTIES[r.party].name}</span>
+          </span>
+          <span className="font-mono text-sm tabular-nums text-ink/70">{fmtOdds(r.odds)}</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -240,7 +220,7 @@ function NativeShare({ text, url }: { text: string; url: string }) {
     <button
       type="button"
       onClick={() => navigator.share({ text, url }).catch(() => {})}
-      className="border-[3px] border-ink bg-cream px-4 py-3 font-narrow font-bold uppercase tracking-[0.14em] text-ink shadow-brutal-sm"
+      className="border-2 border-ink bg-paper px-4 py-3 font-narrow font-bold uppercase tracking-[0.14em] text-ink"
     >
       Share…
     </button>

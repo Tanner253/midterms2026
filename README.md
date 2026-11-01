@@ -85,7 +85,7 @@ Redeploy with `vercel deploy --prod --yes` after any change.
 
 ## Brand
 
-`brand/` holds the scripts that draw the seal, X banner, share card, icons and X post graphic. See `brand/README.md`.
+`brand/` holds the scripts that draw the logo, X banner, share card, icons and X post graphic. See `brand/README.md`.
 
 ## Local development
 

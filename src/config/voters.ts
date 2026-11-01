@@ -30,11 +30,11 @@ export const PAGE_SIZE = 50;
 
 // Low → high. Labels and blurbs can change freely; the JSON only carries the key.
 export const TIERS = [
-  { key: "VOTER", label: "Voter", blurb: "Made the rolls. Every wallet starts here.", pill: "text-cream/60" },
-  { key: "VOLUNTEER", label: "Volunteer", blurb: "Showed up and kept holding.", pill: "text-cream/80" },
-  { key: "ORGANIZER", label: "Organizer", blurb: "Early and steady. The ground game.", pill: "text-cream" },
-  { key: "DELEGATE", label: "Delegate", blurb: "Near the top of the rolls.", pill: "text-gold" },
-  { key: "ELECTOR", label: "Elector", blurb: "The very top. Earliest and steadiest.", pill: "bg-gold px-1.5 text-ink" },
+  { key: "VOTER", label: "Voter", blurb: "Made the rolls. Every wallet starts here.", pill: "text-ink/60" },
+  { key: "VOLUNTEER", label: "Volunteer", blurb: "Showed up and kept holding.", pill: "text-ink/80" },
+  { key: "ORGANIZER", label: "Organizer", blurb: "Early and steady. The ground game.", pill: "text-ink" },
+  { key: "DELEGATE", label: "Delegate", blurb: "Near the top of the rolls.", pill: "text-mark" },
+  { key: "ELECTOR", label: "Elector", blurb: "The very top. Earliest and steadiest.", pill: "bg-mark px-1.5 text-paper" },
 ] as const;
 
 export type TierKey = (typeof TIERS)[number]["key"];

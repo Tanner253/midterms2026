@@ -4,8 +4,7 @@ import { useState } from "react";
 import { PARTIES, initials, type Candidate } from "@/config/candidates";
 import { PHOTOS } from "@/config/photos";
 
-// Candidate portrait (or initials). Round avatars are drawn as pin-back campaign buttons:
-// party-colour rim, cream inner ring, glossy highlight, and a little tilt on hover.
+// Candidate portrait (or initials) in a ballot oval with a party-colour rim.
 // `square` for table cells; `dim` greys out candidates who lost (pass dim={false}
 // when the parent row/card already fades them).
 export default function Avatar({
@@ -22,14 +21,14 @@ export default function Avatar({
   const [broken, setBroken] = useState(false);
   const src = broken ? undefined : (c.image ?? PHOTOS[c.id]?.src);
   const p = PARTIES[c.party];
-  const rim = square ? 2 : Math.max(2, Math.round(size * 0.09));
+  const rim = square ? 2 : Math.max(2, Math.round(size * 0.07));
   return (
     <span
-      className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden font-slab ${
-        square ? "" : "rounded-full shadow-[0_2px_0_rgba(0,0,0,0.45)] transition-transform duration-200 hover:-rotate-[8deg] hover:scale-105"
-      } ${dim && c.status === "lost" ? "grayscale" : ""}`}
+      className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden font-head ${square ? "" : "rounded-[50%]"} ${
+        dim && c.status === "lost" ? "grayscale" : ""
+      }`}
       style={{
-        width: size,
+        width: square ? size : Math.round(size * 0.82),
         height: size,
         background: p.color,
         border: `${rim}px solid ${p.color}`,
@@ -42,16 +41,6 @@ export default function Avatar({
         <img src={src} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} className="h-full w-full object-cover object-[50%_18%]" />
       ) : (
         initials(c.name)
-      )}
-      {!square && (
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 rounded-full"
-          style={{
-            boxShadow: `inset 0 0 0 ${Math.max(1, Math.round(size * 0.035))}px var(--color-cream)`,
-            background: "radial-gradient(circle at 32% 24%, rgba(255,255,255,0.45), rgba(255,255,255,0) 42%)",
-          }}
-        />
       )}
     </span>
   );

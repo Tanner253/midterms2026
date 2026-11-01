@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { SITE } from "@/config/site";
 import BuyButton from "./BuyButton";
 import { IconBallot, IconCoin, IconFlag, IconHome, IconUsers, SOCIAL_ICONS } from "./icons";
-import Seal from "./Seal";
+import Logo from "./Logo";
 
 export const LINKS = [
   { href: "/", label: "Home", short: "Home", Icon: IconHome },
@@ -22,17 +22,14 @@ export default function Nav() {
   const socials = SITE.socials.filter((s) => s.href);
   return (
     <>
-      <header className="sticky top-0 z-40 h-[68px] border-b-4 border-gold bg-ink">
-        <div className="mx-auto flex h-full max-w-7xl items-stretch gap-4 pr-4 sm:pr-6">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 bg-gold pl-4 pr-9 text-ink [clip-path:polygon(0_0,100%_0,calc(100%-22px)_100%,0_100%)] sm:pl-6"
-          >
-            <Seal size={46} />
-            <span className="font-slab text-lg leading-[0.95] sm:text-xl">
+      <header className="sticky top-0 z-40 h-[68px] border-b-[3px] border-ink bg-paper">
+        <div className="mx-auto flex h-full max-w-7xl items-center gap-3 px-4 sm:px-6">
+          <Link href="/" className="flex items-center gap-2">
+            <Logo size={58} />
+            <span className="font-head text-[26px] leading-[0.86]">
               MIDTERMS
               <br />
-              <span className="text-red">2026</span>
+              <span className="text-mark">2026</span>
             </span>
           </Link>
           <nav aria-label="Main" className="ml-auto hidden items-center gap-1 lg:flex">
@@ -43,8 +40,8 @@ export default function Nav() {
                   key={l.href}
                   href={l.href}
                   aria-current={active ? "page" : undefined}
-                  className={`whitespace-nowrap px-3 py-2 font-narrow text-[15px] font-bold uppercase tracking-[0.12em] transition ${
-                    active ? "bg-gold text-ink" : "text-cream/80 hover:bg-cream hover:text-ink"
+                  className={`whitespace-nowrap px-3 py-2 font-narrow text-[15px] font-bold uppercase tracking-[0.1em] transition ${
+                    active ? "bg-ink text-paper" : "text-ink/80 hover:bg-paper-3"
                   }`}
                 >
                   {l.label}
@@ -62,7 +59,7 @@ export default function Nav() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="hidden text-xl text-cream/80 hover:text-gold sm:block"
+                  className="hidden text-xl text-ink/80 hover:text-mark sm:block"
                 >
                   {Icon ? <Icon /> : s.label}
                 </a>
@@ -77,7 +74,7 @@ export default function Nav() {
 
       <nav
         aria-label="Sections"
-        className="sticky top-[68px] z-30 grid grid-cols-5 border-b-4 border-gold bg-ink lg:hidden"
+        className="sticky top-[68px] z-30 grid grid-cols-5 border-b-[3px] border-ink bg-paper lg:hidden"
       >
         {LINKS.map((l) => {
           const active = path === norm(l.href);
@@ -86,8 +83,8 @@ export default function Nav() {
               key={l.href}
               href={l.href}
               aria-current={active ? "page" : undefined}
-              className={`flex min-h-[52px] flex-col items-center justify-center gap-1 px-1 font-narrow text-[11px] font-bold uppercase tracking-[0.06em] ${
-                active ? "bg-gold text-ink" : "text-cream/75"
+              className={`flex min-h-[52px] flex-col items-center justify-center gap-1 px-1 font-narrow text-[11px] font-bold uppercase tracking-[0.04em] ${
+                active ? "bg-ink text-paper" : "text-ink/75"
               }`}
             >
               <l.Icon className="text-[19px]" />

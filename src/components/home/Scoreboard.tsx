@@ -37,14 +37,14 @@ export default function Scoreboard() {
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
-      className="relative border-[5px] border-ink bg-ink-2 shadow-brutal-lg"
+      className="relative h-full border-2 border-ink bg-paper"
     >
-      <div className="scanlines pointer-events-none absolute inset-0" aria-hidden="true" />
-      <div className="relative flex items-center justify-between gap-3 border-b-[3px] border-ink bg-ink px-4 py-2.5">
-        <span className="flex items-center gap-2 font-narrow text-sm font-bold uppercase tracking-[0.22em] text-gold">
-          <LiveDot /> ${SITE.ticker}
+      <div className="greenbar pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div className="relative flex items-center justify-between gap-3 bg-ink px-4 py-2.5 text-paper">
+        <span className="flex items-center gap-2 font-narrow text-sm font-bold uppercase tracking-[0.2em]">
+          <LiveDot color="var(--color-paper)" /> ${SITE.ticker}
         </span>
-        <span className="font-narrow text-xs font-bold uppercase tracking-[0.22em] text-cream/70">{stageLabel(CURRENT_STAGE)}</span>
+        <span className="font-narrow text-xs font-bold uppercase tracking-[0.2em] text-paper/75">{stageLabel(CURRENT_STAGE)}</span>
       </div>
 
       <div className="relative min-h-[300px] p-5 sm:min-h-[280px] sm:p-6" aria-live="polite">
@@ -56,7 +56,7 @@ export default function Scoreboard() {
         </div>
       </div>
 
-      <div className="relative flex items-center justify-center gap-2 border-t-[3px] border-ink bg-ink px-4 py-2">
+      <div className="relative flex items-center justify-center gap-2 border-t-2 border-ink bg-paper px-4 py-2">
         {PANELS.map((name, i) => (
           <button
             key={name}
@@ -69,7 +69,7 @@ export default function Scoreboard() {
             aria-pressed={i === panel}
             className="flex h-8 items-center px-1.5"
           >
-            <span className={`block h-2 transition-all ${i === panel ? "w-7 bg-gold" : "w-2 bg-cream/35"}`} />
+            <span className={`block h-2 transition-all ${i === panel ? "w-7 bg-mark" : "w-2 bg-ink/35"}`} />
           </button>
         ))}
       </div>
@@ -78,7 +78,7 @@ export default function Scoreboard() {
 }
 
 function PanelTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="font-slab text-[clamp(22px,3vw,30px)] uppercase leading-none">{children}</h2>;
+  return <h2 className="font-head text-[clamp(34px,4vw,44px)] uppercase leading-none">{children}</h2>;
 }
 
 function NextBigDay() {
@@ -89,7 +89,7 @@ function NextBigDay() {
   return (
     <>
       <PanelTitle>
-        Next big day <em className="not-italic text-gold">in</em>
+        Next big day in
       </PanelTitle>
       <div className="mt-5 flex gap-2 sm:gap-3">
         <FlipTile size="lg" value={d ? String(d.days) : "—"} unit="Days" />
@@ -97,7 +97,7 @@ function NextBigDay() {
         <FlipTile size="lg" value={d ? pad2(d.mins) : "—"} unit="Mins" />
         <FlipTile size="lg" value={d ? pad2(d.secs) : "—"} unit="Secs" />
       </div>
-      <p className="mt-4 font-narrow text-base font-bold uppercase tracking-[0.18em] text-cream/85">
+      <p className="mt-4 font-narrow text-base font-bold uppercase tracking-[0.18em] text-ink/85">
         {event ? `${event.title} · ${fmtDate(event.date!, true)}` : "Election Day · Nov 3, 2026"}
       </p>
     </>
@@ -121,11 +121,11 @@ function NextBurn() {
           <FlipTile size="lg" value={pad2(d.secs)} unit="Secs" />
         </div>
       ) : (
-        <div className="mt-5 border-[3px] border-dashed border-cream/30 px-4 py-6 text-center font-slab text-2xl uppercase text-cream/80">
+        <div className="mt-5 border-2 border-dashed border-ink/40 px-4 py-6 text-center font-head text-4xl uppercase text-ink/80">
           Burns start at launch
         </div>
       )}
-      <p className="mt-4 font-narrow text-sm font-bold uppercase tracking-[0.18em] text-cream/70">
+      <p className="mt-4 font-narrow text-sm font-bold uppercase tracking-[0.18em] text-ink/70">
         Creator fees claimed &amp; burned on-chain every 15 minutes
       </p>
     </>
@@ -137,7 +137,7 @@ function Remaining() {
   return (
     <>
       <div className="flex items-end gap-3">
-        <span className="font-slab text-[clamp(56px,8vw,84px)] leading-[0.8] text-gold">{alive.length}</span>
+        <span className="font-head text-[clamp(84px,11vw,120px)] leading-[0.8] text-mark">{alive.length}</span>
         <PanelTitle>
           Candidates
           <br />
@@ -148,7 +148,7 @@ function Remaining() {
         {alive.map((c) => (
           <li key={c.id} className="flex flex-col items-center gap-0.5">
             <Avatar c={c} size={34} />
-            <span className="max-w-full truncate font-narrow text-[10px] font-bold uppercase tracking-[0.06em] text-cream/75">{c.ticker}</span>
+            <span className="max-w-full truncate font-narrow text-[10px] font-bold uppercase tracking-[0.06em] text-ink/75">{c.ticker}</span>
           </li>
         ))}
       </ul>
@@ -165,13 +165,13 @@ function UpNext() {
       <PanelTitle>Up next</PanelTitle>
       <ul className="mt-4 space-y-2">
         {events.map((e) => (
-          <li key={e.id} className="flex items-center gap-3 border-[3px] border-ink bg-ink-3 px-3 py-2">
-            <span className="w-20 shrink-0 font-narrow text-sm font-bold uppercase tracking-[0.12em] text-gold">
+          <li key={e.id} className="flex items-center gap-3 border-2 border-ink bg-paper px-3 py-2">
+            <span className="w-20 shrink-0 font-narrow text-sm font-bold uppercase tracking-[0.12em] text-mark">
               {e.date ? fmtDate(e.date) : "TBD"}
             </span>
             <span className="min-w-0">
               <span className="block truncate font-bold">{e.title}</span>
-              <span className="block truncate font-narrow text-xs uppercase tracking-[0.14em] text-cream/60">
+              <span className="block truncate font-narrow text-xs uppercase tracking-[0.14em] text-ink/60">
                 {e.date ? new Date(e.date).getUTCFullYear() : e.when} · {e.place}
               </span>
             </span>

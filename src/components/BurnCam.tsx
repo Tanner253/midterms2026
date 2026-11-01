@@ -17,16 +17,16 @@ export default function BurnCam() {
   const pct = (burned / SITE.totalSupply) * 100;
 
   return (
-    <div className="relative aspect-[16/10] w-full overflow-hidden border-[3px] border-cream bg-black shadow-brutal-gold">
+    <div className="relative aspect-[16/10] w-full overflow-hidden border-[3px] border-ink bg-ink ">
       <div className="absolute inset-0 origin-center animate-[crt-on_0.6s_ease-out_both]">
         <div className="scanlines pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.75))]" aria-hidden="true" />
         {(["left-3 top-3 border-l-2 border-t-2", "right-3 top-3 border-r-2 border-t-2", "bottom-3 left-3 border-b-2 border-l-2", "bottom-3 right-3 border-b-2 border-r-2"] as const).map((c) => (
-          <span key={c} aria-hidden="true" className={`absolute h-5 w-5 border-cream/70 ${c}`} />
+          <span key={c} aria-hidden="true" className={`absolute h-5 w-5 border-paper/70 ${c}`} />
         ))}
 
-        <div className="absolute inset-x-6 top-5 flex items-center justify-between font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-cream/85 sm:text-xs">
-          <span className="flex items-center gap-1.5 text-red-hot">
+        <div className="absolute inset-x-6 top-5 flex items-center justify-between font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-paper/85 sm:text-xs">
+          <span className="flex items-center gap-1.5 text-[#ff6b70]">
             <span className="animate-blink">●</span> REC
           </span>
           <span>Burn cam</span>
@@ -35,27 +35,27 @@ export default function BurnCam() {
 
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center" aria-live="polite">
           {!loaded ? (
-            <span className="font-mono text-sm uppercase tracking-[0.3em] text-cream/60">Tuning in…</span>
+            <span className="font-mono text-sm uppercase tracking-[0.3em] text-paper/60">Tuning in…</span>
           ) : live ? (
             <>
-              <span className="font-slab text-[clamp(44px,8vw,84px)] leading-none text-cream tabular-nums [text-shadow:0_0_18px_rgba(255,67,87,0.55)]">
+              <span className="font-head text-[clamp(44px,8vw,84px)] leading-none text-paper tabular-nums ">
                 {fmtCompact(burned)}
               </span>
-              <span className="mt-1 font-narrow text-lg font-bold uppercase tracking-[0.22em] text-red-hot">${SITE.ticker} burned</span>
-              <span className="mt-1 font-mono text-xs uppercase tracking-[0.2em] text-cream/70">{pct.toFixed(2)}% supply burnt</span>
-              {statsFailed && <span className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-gold">Signal lost · last known value</span>}
+              <span className="mt-1 font-narrow text-lg font-bold uppercase tracking-[0.22em] text-[#ff6b70]">${SITE.ticker} burned</span>
+              <span className="mt-1 font-mono text-xs uppercase tracking-[0.2em] text-paper/70">{pct.toFixed(2)}% supply burnt</span>
+              {statsFailed && <span className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-paper">Signal lost · last known value</span>}
             </>
           ) : (
             <>
-              <span className="animate-blink font-slab text-[clamp(32px,6vw,56px)] leading-none text-cream/85">STANDBY</span>
-              <span className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-cream/60">
+              <span className="animate-blink font-head text-[clamp(32px,6vw,56px)] leading-none text-paper/85">STANDBY</span>
+              <span className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-paper/60">
                 {statsFailed ? "No signal" : "No signal · burns start at launch"}
               </span>
             </>
           )}
         </div>
 
-        <div className="absolute inset-x-6 bottom-5 flex items-center justify-between font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-cream/70 sm:text-xs">
+        <div className="absolute inset-x-6 bottom-5 flex items-center justify-between font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-paper/70 sm:text-xs">
           <span>HD</span>
           <span>{live && stats?.lastCycleAt && now !== null ? `Last burn ${timeAgo(stats.lastCycleAt, now)}` : "Cam 01"}</span>
           <span>X1.0 · Auto</span>

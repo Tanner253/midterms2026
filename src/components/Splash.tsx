@@ -3,10 +3,12 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ENTERED_KEY } from "@/lib/splash";
-import Seal from "./Seal";
+import Logo from "./Logo";
+import { Oval } from "./ui";
 
 const GATED = new Set(["/", "/midterms", "/candidates", "/race", "/voters"]);
 
+// The gate: a blank ballot. Marking the oval lets you in.
 export default function Splash() {
   const path = (usePathname() ?? "/").replace(/\/+$/, "") || "/";
   const [open, setOpen] = useState(true);
@@ -37,7 +39,7 @@ export default function Splash() {
     } catch {}
     document.documentElement.dataset.entered = "1";
     setLeaving(true);
-    setTimeout(() => setOpen(false), 220);
+    setTimeout(() => setOpen(false), 260);
   }
 
   if (!show) return null;
@@ -46,34 +48,30 @@ export default function Splash() {
       role="dialog"
       aria-modal="true"
       aria-label="Welcome to US Midterms 2026"
-      className={`fixed inset-0 z-50 flex items-center justify-center overflow-clip bg-navy transition-opacity duration-200 [html[data-entered]_&]:hidden ${
+      className={`fixed inset-0 z-50 flex flex-col justify-between overflow-clip bg-paper transition-opacity duration-200 [html[data-entered]_&]:hidden ${
         leaving ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div aria-hidden="true" className="absolute inset-0">
-        <div className="stars absolute inset-0" />
-        <div className="absolute -left-1/4 top-[55%] h-[70%] w-[150%] -rotate-6 bg-red" />
-        <div className="stripes absolute -left-1/4 top-[52%] h-6 w-[150%] -rotate-6 opacity-90" />
-        <div className="absolute -right-[20%] -top-[30%] h-[80%] w-[60%] rotate-12 bg-blue/60" />
-      </div>
-
-      <div className="relative flex animate-rise flex-col items-center px-4 text-center">
-        <Seal size={132} className="drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]" />
-        <div className="poster-shadow mt-6 font-slab text-[clamp(44px,11vw,104px)] leading-[0.95] text-cream">
+      <div aria-hidden="true" className="timing mx-3 mt-3" />
+      <div className="flex animate-rise flex-col items-center px-4 text-center">
+        <Logo size={190} className="-my-6" />
+        <div className="font-head text-[clamp(84px,17vw,190px)] leading-[0.84]">
           US MIDTERMS
           <br />
-          <span className="text-gold">2026</span>
+          <span className="text-mark">2026</span>
         </div>
-        <p className="mt-4 font-narrow text-sm font-bold uppercase tracking-[0.4em] text-cream/90">Exclusively on pump.fun</p>
+        <p className="mt-4 font-narrow text-sm font-bold uppercase tracking-[0.26em] text-ink/70">Official ballot · Exclusively on pump.fun</p>
         <button
           ref={button}
           type="button"
           onClick={enter}
-          className="mt-10 border-[3px] border-ink bg-gold px-8 py-4 font-narrow text-xl font-bold uppercase tracking-[0.18em] text-ink shadow-brutal-md transition hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none"
+          className="group mt-8 flex items-center gap-3 border-2 border-ink bg-paper px-6 py-4 font-narrow text-xl font-bold uppercase tracking-[0.14em] text-ink transition hover:bg-ink hover:text-paper"
         >
-          Enter the campaign →
+          <Oval size={20} filled={leaving} className="group-hover:border-paper" />
+          Mark the oval to enter
         </button>
       </div>
+      <div aria-hidden="true" className="timing mx-3 mb-3" />
     </div>
   );
 }
