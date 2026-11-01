@@ -48,3 +48,5 @@ next-env.d.ts
 # brand kit
 brand/node_modules
 brand/out
+
+.claude
