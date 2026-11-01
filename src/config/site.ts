@@ -6,7 +6,7 @@ export const SITE = {
   ticker: "MIDTERMS",
   url: "https://midterms2026.fun",
   // Paste the $MIDTERMS contract address here once it's live on pump.fun.
-  mainMint: "",
+  mainMint: "74Np8Ga5DomwZVx5bZBGFcHgFavPhgkvkJ2LPdWdpump",
   totalSupply: 1_000_000_000,
   electionDay: "2026-11-03T00:00:00-05:00",
   socials: [
