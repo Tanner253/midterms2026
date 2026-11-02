@@ -12,14 +12,6 @@ function mark() {
   <text x="512" y="686" font-family="${HEAD}" font-weight="900" font-size="500" text-anchor="middle" fill="${C.paper}">M</text>`;
 }
 
-// PFP. X crops it to a circle, so everything stays well inside the corners.
-function pfp() {
-  return svg(1024, 1024, `
-  <rect width="1024" height="1024" fill="${C.paper}"/>
-  <g transform="translate(142 63) scale(0.72266)">${mark()}</g>
-  ${text(512, 821, 150, "MIDTERMS", { anchor: "middle", spacing: 6 })}`);
-}
-
 // The logo on its own with a transparent background, for the site's nav.
 const logo = () => svg(1024, 1024, mark());
 
@@ -33,6 +25,20 @@ function penField(w, h) {
   <rect width="${cx}" height="${h}" fill="${C.red}"/>
   <rect x="${cx}" width="${cx}" height="${h}" fill="${C.blue}"/>
   ${scribble(cx, cy, rx, ry, { from: 0.42, to: 0.58, color: C.swing, passes: 26, seed: 47 })}`;
+}
+
+// PFP, matching the banner. X crops it to a circle, so the word stays inside the circle's width.
+function pfp() {
+  return svg(1024, 1024, `
+  ${penField(1024, 1024)}
+  ${text(512, 594, 204, "MIDTERMS", { anchor: "middle", fill: C.paper, spacing: 4 })}`);
+}
+
+// The alternate: one big M, for places that show the image very small.
+function pfpM() {
+  return svg(1024, 1024, `
+  ${penField(1024, 1024)}
+  ${text(512, 800, 760, "M", { anchor: "middle", fill: C.paper })}`);
 }
 
 // X header, 1500x500. The avatar sits over the bottom-left, so the word stays above it.
@@ -70,10 +76,11 @@ async function main() {
   render(banner(), "midterms-banner-1500x500.png", 1500);
   render(banner(), "midterms-banner-1200x400.png", 1200);
   render(banner(), "midterms-banner-600x200.png", 600);
+  for (const w of [1024, 400]) render(pfpM(), `midterms-pfp-m-${w}.png`, w);
   render(logo(), "logo.png", 512);
   render(og(), "og.png", 1200);
-  render(pfp(), "icon.png", 512);
-  render(pfp(), "apple-icon.png", 180);
+  render(pfpM(), "icon.png", 512);
+  render(pfpM(), "apple-icon.png", 180);
   const small = [16, 32, 48].map((w) => render(favicon(), `favicon-${w}.png`, w));
   fs.writeFileSync(path.join(OUT, "favicon.ico"), await require("png-to-ico")(small));
   console.log("rendered");
